@@ -66,4 +66,40 @@ describe("CRM AI Assistant — demo data integrity", () => {
       expect(validStatuses).toContain(lead.status);
     }
   });
+
+  // AI data-quality guard: every lead must have core contact fields populated.
+  // Research shows missing company names / emails are the #1 reason AI scoring fails.
+  it("every lead has non-empty contact fields (email, company, fullName)", () => {
+    for (const lead of demoLeads) {
+      expect(lead.email.trim().length, `Lead ${lead.id} has empty email`).toBeGreaterThan(0);
+      expect(lead.company.trim().length, `Lead ${lead.id} has empty company`).toBeGreaterThan(0);
+      expect(lead.fullName.trim().length, `Lead ${lead.id} has empty fullName`).toBeGreaterThan(0);
+    }
+  });
+
+  // AI data-quality guard: high-scored leads without recent contact are a red flag.
+  // Stale scores mislead reps into chasing ghosts instead of real opportunities.
+  it("high-scored leads (≥85) have been contacted at least once", () => {
+    for (const lead of demoLeads) {
+      if (lead.aiScore >= 85) {
+        expect(
+          lead.lastContactedAt,
+          `Lead ${lead.id} scored ${lead.aiScore} but has never been contacted — score may be stale`
+        ).not.toBeNull();
+      }
+    }
+  });
+
+  // Pipeline hygiene: closed deals should not carry pending follow-ups.
+  // Outdated stage data is the second-most-common AI scoring quality issue.
+  it("won and lost leads have no pending follow-up references", () => {
+    for (const lead of demoLeads) {
+      if (lead.status === "won" || lead.status === "lost") {
+        expect(
+          lead.nextFollowUpId,
+          `Lead ${lead.id} is ${lead.status} but still has pending follow-up ${lead.nextFollowUpId}`
+        ).toBeNull();
+      }
+    }
+  });
 });
