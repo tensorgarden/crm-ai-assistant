@@ -6,6 +6,12 @@ export type Priority = "high" | "medium" | "low";
 
 export type FollowUpType = "call" | "email" | "meeting" | "demo" | "proposal_send";
 
+export interface ScoreFactor {
+  label: string;
+  impact: "positive" | "negative";
+  weight: number; // 0–100 relative contribution to the score
+}
+
 export interface Lead {
   id: string;
   fullName: string;
@@ -16,6 +22,7 @@ export interface Lead {
   source: LeadSource;
   status: LeadStatus;
   aiScore: number;
+  aiScoreFactors: ScoreFactor[];
   aiRiskFlags: string[];
   dealValue: number;
   ownerId: string;

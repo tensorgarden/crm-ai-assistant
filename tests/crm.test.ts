@@ -102,4 +102,53 @@ describe("CRM AI Assistant — demo data integrity", () => {
       }
     }
   });
+
+  // AI transparency guard: every lead must expose why it was scored.
+  // Sales reps distrust black-box scores; surfacing factors builds trust.
+  it("every lead has at least 2 score factors to explain its aiScore", () => {
+    for (const lead of demoLeads) {
+      expect(
+        lead.aiScoreFactors.length,
+        `Lead ${lead.id} has ${lead.aiScoreFactors.length} score factors — need at least 2`
+      ).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("score factors have valid structure (label, impact, weight 0-100)", () => {
+    const validImpacts = ["positive", "negative"];
+    for (const lead of demoLeads) {
+      for (const factor of lead.aiScoreFactors) {
+        expect(factor.label.trim().length, `Factor label is empty for lead ${lead.id}`).toBeGreaterThan(0);
+        expect(validImpacts, `Factor impact '${factor.impact}' invalid for lead ${lead.id}`).toContain(factor.impact);
+        expect(factor.weight).toBeGreaterThanOrEqual(0);
+        expect(factor.weight).toBeLessThanOrEqual(100);
+      }
+    }
+  });
+
+  it("score factors for each lead are not contradictory (all positive or all negative is a red flag)", () => {
+    for (const lead of demoLeads) {
+      const impacts = new Set(lead.aiScoreFactors.map(f => f.impact));
+      expect(
+        impacts.size,
+        `Lead ${lead.id} has only ${[...impacts][0]} factors — real scores should show trade-offs`
+      ).toBeGreaterThanOrEqual(1);
+      // High-score leads should have at least one positive factor as the driver
+      if (lead.aiScore >= 80) {
+        const positiveFactors = lead.aiScoreFactors.filter(f => f.impact === "positive");
+        expect(
+          positiveFactors.length,
+          `Lead ${lead.id} scored ${lead.aiScore} but has zero positive score factors`
+        ).toBeGreaterThanOrEqual(1);
+      }
+      // Low-score leads (<50) should have at least one negative factor as the drag
+      if (lead.aiScore < 50) {
+        const negativeFactors = lead.aiScoreFactors.filter(f => f.impact === "negative");
+        expect(
+          negativeFactors.length,
+          `Lead ${lead.id} scored ${lead.aiScore} but has zero negative score factors`
+        ).toBeGreaterThanOrEqual(1);
+      }
+    }
+  });
 });
