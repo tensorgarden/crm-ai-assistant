@@ -151,4 +151,36 @@ describe("CRM AI Assistant — demo data integrity", () => {
       }
     }
   });
+
+  // Score confidence guard: modern AI lead scoring needs reps to see freshness,
+  // not just a single black-box priority number.
+  it("every lead exposes score confidence and a parseable score refresh timestamp", () => {
+    const validConfidence = ["high", "medium", "low"];
+    for (const lead of demoLeads) {
+      expect(validConfidence, `Lead ${lead.id} has invalid confidence ${lead.aiScoreConfidence}`).toContain(lead.aiScoreConfidence);
+      expect(Number.isNaN(Date.parse(lead.aiScoreLastUpdatedAt)), `Lead ${lead.id} has invalid score timestamp`).toBe(false);
+    }
+  });
+
+  it("score timestamps are refreshed after the most recent contact activity", () => {
+    for (const lead of demoLeads) {
+      if (lead.lastContactedAt) {
+        expect(
+          Date.parse(lead.aiScoreLastUpdatedAt),
+          `Lead ${lead.id} score timestamp predates its last contact`
+        ).toBeGreaterThanOrEqual(Date.parse(lead.lastContactedAt));
+      }
+    }
+  });
+
+  it("low-confidence scores carry an explicit reason for rep review", () => {
+    for (const lead of demoLeads) {
+      if (lead.aiScoreConfidence === "low") {
+        expect(
+          lead.aiRiskFlags.length,
+          `Lead ${lead.id} is low confidence but has no review risk flags`
+        ).toBeGreaterThan(0);
+      }
+    }
+  });
 });

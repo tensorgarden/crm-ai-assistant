@@ -41,6 +41,8 @@ export const demoLeads: Lead[] = [
     source: "inbound",
     status: "proposal",
     aiScore: 92,
+    aiScoreConfidence: "high",
+    aiScoreLastUpdatedAt: "2026-06-07T14:30:00Z",
     aiScoreFactors: [
       { label: "High deal value ($84K)", impact: "positive", weight: 30 },
       { label: "Recent engagement (7d ago)", impact: "positive", weight: 25 },
@@ -65,6 +67,8 @@ export const demoLeads: Lead[] = [
     source: "event",
     status: "qualified",
     aiScore: 87,
+    aiScoreConfidence: "medium",
+    aiScoreLastUpdatedAt: "2026-06-08T11:00:00Z",
     aiScoreFactors: [
       { label: "Enterprise healthcare deal ($126K)", impact: "positive", weight: 35 },
       { label: "Event-sourced — warm inbound signal", impact: "positive", weight: 20 },
@@ -89,6 +93,8 @@ export const demoLeads: Lead[] = [
     source: "referral",
     status: "contacted",
     aiScore: 76,
+    aiScoreConfidence: "medium",
+    aiScoreLastUpdatedAt: "2026-06-05T09:15:00Z",
     aiScoreFactors: [
       { label: "Referral source — higher intent", impact: "positive", weight: 28 },
       { label: "Fintech vertical fit", impact: "positive", weight: 22 },
@@ -114,6 +120,8 @@ export const demoLeads: Lead[] = [
     source: "outbound",
     status: "new",
     aiScore: 64,
+    aiScoreConfidence: "low",
+    aiScoreLastUpdatedAt: "2026-06-09T08:30:00Z",
     aiScoreFactors: [
       { label: "COO title — decision-maker", impact: "positive", weight: 22 },
       { label: "Manufacturing vertical fit", impact: "positive", weight: 16 },
@@ -139,6 +147,8 @@ export const demoLeads: Lead[] = [
     source: "partner",
     status: "proposal",
     aiScore: 91,
+    aiScoreConfidence: "high",
+    aiScoreLastUpdatedAt: "2026-06-08T16:15:00Z",
     aiScoreFactors: [
       { label: "Largest deal value ($210K)", impact: "positive", weight: 35 },
       { label: "Enterprise partner referral", impact: "positive", weight: 25 },
@@ -163,6 +173,8 @@ export const demoLeads: Lead[] = [
     source: "inbound",
     status: "qualified",
     aiScore: 83,
+    aiScoreConfidence: "medium",
+    aiScoreLastUpdatedAt: "2026-06-06T12:00:00Z",
     aiScoreFactors: [
       { label: "Managing partner — buyer authority", impact: "positive", weight: 28 },
       { label: "Inbound source — high intent", impact: "positive", weight: 24 },
@@ -187,6 +199,8 @@ export const demoLeads: Lead[] = [
     source: "event",
     status: "won",
     aiScore: 95,
+    aiScoreConfidence: "high",
+    aiScoreLastUpdatedAt: "2026-06-01T09:30:00Z",
     aiScoreFactors: [
       { label: "Closed-won validation signal", impact: "positive", weight: 40 },
       { label: "Enterprise deal ($156K)", impact: "positive", weight: 30 },
@@ -211,6 +225,8 @@ export const demoLeads: Lead[] = [
     source: "inbound",
     status: "lost",
     aiScore: 68,
+    aiScoreConfidence: "low",
+    aiScoreLastUpdatedAt: "2026-05-28T15:15:00Z",
     aiScoreFactors: [
       { label: "Inbound source — had intent", impact: "positive", weight: 20 },
       { label: "Healthcare vertical fit", impact: "positive", weight: 18 },

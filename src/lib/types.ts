@@ -6,6 +6,8 @@ export type Priority = "high" | "medium" | "low";
 
 export type FollowUpType = "call" | "email" | "meeting" | "demo" | "proposal_send";
 
+export type ScoreConfidence = "high" | "medium" | "low";
+
 export interface ScoreFactor {
   label: string;
   impact: "positive" | "negative";
@@ -22,6 +24,8 @@ export interface Lead {
   source: LeadSource;
   status: LeadStatus;
   aiScore: number;
+  aiScoreConfidence: ScoreConfidence;
+  aiScoreLastUpdatedAt: string;
   aiScoreFactors: ScoreFactor[];
   aiRiskFlags: string[];
   dealValue: number;
