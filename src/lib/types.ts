@@ -8,6 +8,16 @@ export type FollowUpType = "call" | "email" | "meeting" | "demo" | "proposal_sen
 
 export type ScoreConfidence = "high" | "medium" | "low";
 
+export type RepFeedbackAction = "override_up" | "override_down" | "confirm";
+
+export interface RepFeedback {
+  repId: string;
+  action: RepFeedbackAction;
+  reason: string;
+  previousScore: number;
+  createdAt: string;
+}
+
 export interface ScoreFactor {
   label: string;
   impact: "positive" | "negative";
@@ -28,6 +38,7 @@ export interface Lead {
   aiScoreLastUpdatedAt: string;
   aiScoreFactors: ScoreFactor[];
   aiRiskFlags: string[];
+  repFeedback: RepFeedback | null;
   dealValue: number;
   ownerId: string;
   createdAt: string;

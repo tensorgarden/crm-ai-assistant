@@ -183,4 +183,57 @@ describe("CRM AI Assistant — demo data integrity", () => {
       }
     }
   });
+
+  // Closed-loop rep feedback: reps must be able to override AI scores.
+  // Without this, model accuracy drifts and reps ignore scores entirely.
+  it("rep feedback entries reference valid sales reps", () => {
+    const repIds = new Set(demoSalesReps.map(r => r.id));
+    for (const lead of demoLeads) {
+      if (lead.repFeedback) {
+        expect(
+          repIds.has(lead.repFeedback.repId),
+          `Lead ${lead.id} rep feedback references unknown rep ${lead.repFeedback.repId}`
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("rep feedback reasons are non-empty and meaningful", () => {
+    for (const lead of demoLeads) {
+      if (lead.repFeedback) {
+        expect(
+          lead.repFeedback.reason.trim().length,
+          `Lead ${lead.id} rep feedback reason is empty`
+        ).toBeGreaterThanOrEqual(20);
+      }
+    }
+  });
+
+  it("rep feedback actions use valid values", () => {
+    const validActions = ["override_up", "override_down", "confirm"];
+    for (const lead of demoLeads) {
+      if (lead.repFeedback) {
+        expect(
+          validActions,
+          `Lead ${lead.id} has invalid rep feedback action '${lead.repFeedback.action}'`
+        ).toContain(lead.repFeedback.action);
+      }
+    }
+  });
+
+  it("rep feedback createdAt is a parseable ISO timestamp", () => {
+    for (const lead of demoLeads) {
+      if (lead.repFeedback) {
+        expect(
+          Number.isNaN(Date.parse(lead.repFeedback.createdAt)),
+          `Lead ${lead.id} rep feedback has invalid createdAt`
+        ).toBe(false);
+      }
+    }
+  });
+
+  it("at least one lead has rep feedback demonstrating the closed-loop feature", () => {
+    const feedbackLeads = demoLeads.filter(l => l.repFeedback !== null);
+    expect(feedbackLeads.length, "No leads have rep feedback — closed-loop override is not demonstrated").toBeGreaterThanOrEqual(1);
+  });
 });
