@@ -10,6 +10,8 @@ export type ScoreConfidence = "high" | "medium" | "low";
 
 export type RepFeedbackAction = "override_up" | "override_down" | "confirm";
 
+export type ScoreFactorCategory = "firmographic" | "technographic" | "intent" | "engagement";
+
 export interface RepFeedback {
   repId: string;
   action: RepFeedbackAction;
@@ -21,6 +23,7 @@ export interface RepFeedback {
 export interface ScoreFactor {
   label: string;
   impact: "positive" | "negative";
+  category: ScoreFactorCategory;
   weight: number; // 0–100 relative contribution to the score
 }
 

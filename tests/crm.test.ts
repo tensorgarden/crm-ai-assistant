@@ -114,14 +114,34 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
-  it("score factors have valid structure (label, impact, weight 0-100)", () => {
+  it("score factors have valid structure (label, impact, category, weight 0-100)", () => {
     const validImpacts = ["positive", "negative"];
+    const validCategories = ["firmographic", "technographic", "intent", "engagement"];
     for (const lead of demoLeads) {
       for (const factor of lead.aiScoreFactors) {
         expect(factor.label.trim().length, `Factor label is empty for lead ${lead.id}`).toBeGreaterThan(0);
         expect(validImpacts, `Factor impact '${factor.impact}' invalid for lead ${lead.id}`).toContain(factor.impact);
+        expect(validCategories, `Factor category '${factor.category}' invalid for lead ${lead.id}`).toContain(factor.category);
         expect(factor.weight).toBeGreaterThanOrEqual(0);
         expect(factor.weight).toBeLessThanOrEqual(100);
+      }
+    }
+  });
+
+  // Signal-quality guard: current lead scoring guidance warns that engagement noise
+  // (opens, clicks, page views) should not override ICP fit or buying intent.
+  it("high-scored leads are backed by firmographic or intent signals, not engagement alone", () => {
+    for (const lead of demoLeads) {
+      if (lead.aiScore >= 85) {
+        const highQualityDrivers = lead.aiScoreFactors.filter(
+          factor =>
+            factor.impact === "positive" &&
+            (factor.category === "firmographic" || factor.category === "intent")
+        );
+        expect(
+          highQualityDrivers.length,
+          `Lead ${lead.id} scored ${lead.aiScore} without firmographic or intent drivers`
+        ).toBeGreaterThanOrEqual(1);
       }
     }
   });
