@@ -12,6 +12,8 @@ export type RepFeedbackAction = "override_up" | "override_down" | "confirm";
 
 export type ScoreFactorCategory = "firmographic" | "technographic" | "intent" | "engagement";
 
+export type ScoreStalenessRisk = "fresh" | "watch" | "decay_review";
+
 export interface RepFeedback {
   repId: string;
   action: RepFeedbackAction;
@@ -41,6 +43,8 @@ export interface Lead {
   aiScoreLastUpdatedAt: string;
   aiScoreFactors: ScoreFactor[];
   aiRiskFlags: string[];
+  scoreStalenessRisk: ScoreStalenessRisk;
+  scoreStalenessReason: string | null;
   repFeedback: RepFeedback | null;
   dealValue: number;
   ownerId: string;

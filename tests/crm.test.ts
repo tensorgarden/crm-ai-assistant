@@ -204,6 +204,46 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+  it("score staleness risk values are valid and explained when attention is needed", () => {
+    const validStalenessRisks = ["fresh", "watch", "decay_review"];
+    for (const lead of demoLeads) {
+      expect(
+        validStalenessRisks,
+        `Lead ${lead.id} has invalid staleness risk ${lead.scoreStalenessRisk}`
+      ).toContain(lead.scoreStalenessRisk);
+
+      if (lead.scoreStalenessRisk !== "fresh") {
+        expect(
+          lead.scoreStalenessReason?.trim().length ?? 0,
+          `Lead ${lead.id} needs a staleness explanation when risk is ${lead.scoreStalenessRisk}`
+        ).toBeGreaterThanOrEqual(20);
+      }
+    }
+  });
+
+  it("decay-review leads carry explicit risk flags before stale intent stays in the sales queue", () => {
+    const decayReviewLeads = demoLeads.filter(l => l.scoreStalenessRisk === "decay_review");
+    expect(
+      decayReviewLeads.length,
+      "No demo leads show score decay review for stale CRM intent"
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      decayReviewLeads.some(l => l.status !== "won" && l.status !== "lost"),
+      "At least one active lead should show score decay review before reps chase stale intent"
+    ).toBe(true);
+
+    for (const lead of decayReviewLeads) {
+      expect(
+        lead.aiRiskFlags,
+        `Lead ${lead.id} is marked for decay review but lacks the score_decay_review risk flag`
+      ).toContain("score_decay_review");
+      expect(
+        lead.aiScoreConfidence,
+        `Lead ${lead.id} should not keep high confidence while marked for score decay review`
+      ).not.toBe("high");
+    }
+  });
+
   // Closed-loop rep feedback: reps must be able to override AI scores.
   // Without this, model accuracy drifts and reps ignore scores entirely.
   it("rep feedback entries reference valid sales reps", () => {
