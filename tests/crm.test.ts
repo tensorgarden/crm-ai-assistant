@@ -296,4 +296,36 @@ describe("CRM AI Assistant — demo data integrity", () => {
     const feedbackLeads = demoLeads.filter(l => l.repFeedback !== null);
     expect(feedbackLeads.length, "No leads have rep feedback — closed-loop override is not demonstrated").toBeGreaterThanOrEqual(1);
   });
+
+  // Vanity-metric guard: automated scanners and bot-like page views should not
+  // get routed as hot leads just because engagement counters are high.
+  it("filters scanner-like inbound engagement noise before routing leads", () => {
+    const scannerNoiseLeads = demoLeads.filter(l => l.aiRiskFlags.includes("bot_engagement_noise"));
+
+    expect(
+      scannerNoiseLeads.length,
+      "No demo leads show bot/scanner engagement filtering for vanity metrics"
+    ).toBeGreaterThanOrEqual(1);
+
+    for (const lead of scannerNoiseLeads) {
+      const positiveEngagementWeight = lead.aiScoreFactors
+        .filter(f => f.category === "engagement" && f.impact === "positive")
+        .reduce((sum, f) => sum + f.weight, 0);
+      const negativeEngagementWeight = lead.aiScoreFactors
+        .filter(f => f.category === "engagement" && f.impact === "negative")
+        .reduce((sum, f) => sum + f.weight, 0);
+
+      expect(lead.aiScore, `Lead ${lead.id} has scanner noise but is still scored hot`).toBeLessThan(60);
+      expect(lead.aiScoreConfidence, `Lead ${lead.id} should be low confidence until a buyer is verified`).toBe("low");
+      expect(
+        negativeEngagementWeight,
+        `Lead ${lead.id} should down-rank bot/scanner engagement noise more than it rewards page views`
+      ).toBeGreaterThan(positiveEngagementWeight);
+      expect(
+        lead.aiScoreFactors.some(f => f.category === "intent" && f.impact === "negative"),
+        `Lead ${lead.id} should show missing buyer intent before rep routing`
+      ).toBe(true);
+    }
+  });
+
 });
