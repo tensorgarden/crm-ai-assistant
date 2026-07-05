@@ -90,6 +90,56 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+
+  // Routing SLA guard: fresh research shows manual routing delays kill conversion,
+  // with high-intent leads needing a first response inside about five minutes.
+  it("routes active high-intent leads with a five-minute first-response SLA", () => {
+    const activeHighIntentLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(activeHighIntentLeads.length, "No active high-intent leads found for routing SLA coverage").toBeGreaterThanOrEqual(1);
+
+    for (const lead of activeHighIntentLeads) {
+      const routingSla = lead.routingSla;
+      expect(routingSla, `Lead ${lead.id} is high intent but has no routing SLA`).not.toBeNull();
+      if (!routingSla) {
+        continue;
+      }
+
+      const assignedAt = Date.parse(routingSla.assignedAt);
+      const dueAt = Date.parse(routingSla.firstResponseDueAt);
+      const fiveMinutesMs = 5 * 60 * 1000;
+
+      expect(Number.isNaN(assignedAt), `Lead ${lead.id} has invalid routing assignedAt`).toBe(false);
+      expect(Number.isNaN(dueAt), `Lead ${lead.id} has invalid first response due time`).toBe(false);
+      expect(dueAt - assignedAt, `Lead ${lead.id} response SLA is not after assignment`).toBeGreaterThan(0);
+      expect(dueAt - assignedAt, `Lead ${lead.id} response SLA exceeds five minutes`).toBeLessThanOrEqual(fiveMinutesMs);
+      expect(["on_track", "at_risk", "breached"], `Lead ${lead.id} has invalid routing SLA status`).toContain(routingSla.status);
+      expect(routingSla.note.trim().length, `Lead ${lead.id} routing SLA lacks context`).toBeGreaterThanOrEqual(20);
+    }
+  });
+
+  it("does not mark met routing SLAs as late when first response landed before the due time", () => {
+    const routedLeads = demoLeads.filter(lead => lead.routingSla?.firstResponseAt);
+    expect(routedLeads.length, "No demo leads show a completed first-response SLA").toBeGreaterThanOrEqual(1);
+
+    for (const lead of routedLeads) {
+      const routingSla = lead.routingSla;
+      expect(routingSla).not.toBeNull();
+      if (!routingSla || !routingSla.firstResponseAt) {
+        continue;
+      }
+
+      const firstResponseAt = Date.parse(routingSla.firstResponseAt);
+      const dueAt = Date.parse(routingSla.firstResponseDueAt);
+
+      expect(Number.isNaN(firstResponseAt), `Lead ${lead.id} has invalid first response timestamp`).toBe(false);
+      expect(firstResponseAt, `Lead ${lead.id} first response missed the SLA due time`).toBeLessThanOrEqual(dueAt);
+      expect(routingSla.status, `Lead ${lead.id} met SLA but is not marked on-track`).toBe("on_track");
+    }
+  });
+
   // Pipeline hygiene: closed deals should not carry pending follow-ups.
   // Outdated stage data is the second-most-common AI scoring quality issue.
   it("won and lost leads have no pending follow-up references", () => {

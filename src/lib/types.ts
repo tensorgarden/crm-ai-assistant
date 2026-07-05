@@ -14,12 +14,22 @@ export type ScoreFactorCategory = "firmographic" | "technographic" | "intent" | 
 
 export type ScoreStalenessRisk = "fresh" | "watch" | "decay_review";
 
+export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
+
 export interface RepFeedback {
   repId: string;
   action: RepFeedbackAction;
   reason: string;
   previousScore: number;
   createdAt: string;
+}
+
+export interface RoutingSla {
+  assignedAt: string;
+  firstResponseDueAt: string;
+  firstResponseAt: string | null;
+  status: RoutingSlaStatus;
+  note: string;
 }
 
 export interface ScoreFactor {
@@ -46,6 +56,7 @@ export interface Lead {
   scoreStalenessRisk: ScoreStalenessRisk;
   scoreStalenessReason: string | null;
   repFeedback: RepFeedback | null;
+  routingSla: RoutingSla | null;
   dealValue: number;
   ownerId: string;
   createdAt: string;
