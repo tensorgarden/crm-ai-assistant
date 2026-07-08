@@ -14,6 +14,8 @@ export type ScoreFactorCategory = "firmographic" | "technographic" | "intent" | 
 
 export type ScoreStalenessRisk = "fresh" | "watch" | "decay_review";
 
+export type BuyingCommitteeRole = "executive" | "operations" | "technical" | "finance" | "security" | "legal";
+
 export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
 
 export interface RepFeedback {
@@ -30,6 +32,12 @@ export interface RoutingSla {
   firstResponseAt: string | null;
   status: RoutingSlaStatus;
   note: string;
+}
+
+export interface BuyingCommitteeSignal {
+  role: BuyingCommitteeRole;
+  signal: string;
+  observedAt: string;
 }
 
 export interface ScoreFactor {
@@ -53,6 +61,7 @@ export interface Lead {
   aiScoreLastUpdatedAt: string;
   aiScoreFactors: ScoreFactor[];
   aiRiskFlags: string[];
+  buyingCommitteeSignals: BuyingCommitteeSignal[];
   scoreStalenessRisk: ScoreStalenessRisk;
   scoreStalenessReason: string | null;
   repFeedback: RepFeedback | null;

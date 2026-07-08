@@ -140,6 +140,47 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+
+  // Account-based buying committees are a stronger intent signal than one person
+  // clicking around; hot leads should show multiple roles before reps trust the score.
+  it("buying committee signals are timestamped and role-tagged", () => {
+    const validRoles = ["executive", "operations", "technical", "finance", "security", "legal"];
+    const leadsWithCommitteeSignals = demoLeads.filter(lead => lead.buyingCommitteeSignals.length > 0);
+
+    expect(
+      leadsWithCommitteeSignals.length,
+      "No demo leads show account-based buying committee activity"
+    ).toBeGreaterThanOrEqual(1);
+
+    for (const lead of leadsWithCommitteeSignals) {
+      for (const signal of lead.buyingCommitteeSignals) {
+        expect(validRoles, `Lead ${lead.id} has invalid committee role ${signal.role}`).toContain(signal.role);
+        expect(signal.signal.trim().length, `Lead ${lead.id} has an empty buying committee signal`).toBeGreaterThanOrEqual(25);
+        expect(Number.isNaN(Date.parse(signal.observedAt)), `Lead ${lead.id} has invalid committee observedAt`).toBe(false);
+      }
+    }
+  });
+
+  it("active high-intent leads show multi-role committee alignment before hot routing", () => {
+    const activeHighIntentLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(activeHighIntentLeads.length, "No active high-intent leads found for committee coverage").toBeGreaterThanOrEqual(1);
+
+    for (const lead of activeHighIntentLeads) {
+      const committeeRoles = new Set(lead.buyingCommitteeSignals.map(signal => signal.role));
+      expect(
+        committeeRoles.size,
+        `Lead ${lead.id} is hot but lacks multi-role buying committee evidence`
+      ).toBeGreaterThanOrEqual(2);
+      expect(
+        lead.aiRiskFlags.includes("bot_engagement_noise"),
+        `Lead ${lead.id} should not be routed hot from scanner or vanity engagement noise`
+      ).toBe(false);
+    }
+  });
+
   // Pipeline hygiene: closed deals should not carry pending follow-ups.
   // Outdated stage data is the second-most-common AI scoring quality issue.
   it("won and lost leads have no pending follow-up references", () => {

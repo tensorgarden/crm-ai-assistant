@@ -52,6 +52,8 @@ function LeadRow({ lead }: { lead: Lead }) {
   const scoreColor = lead.aiScore >= 85 ? "text-emerald-600" : lead.aiScore >= 70 ? "text-amber-600" : "text-red-600";
   const confidenceTone = lead.aiScoreConfidence === "high" ? "green" : lead.aiScoreConfidence === "medium" ? "amber" : "red";
   const routingSlaTone = lead.routingSla?.status === "on_track" ? "green" : lead.routingSla?.status === "at_risk" ? "amber" : lead.routingSla?.status === "breached" ? "red" : "slate";
+  const committeeRoles = lead.buyingCommitteeSignals.map(signal => signal.role);
+  const committeeRoleCount = new Set(committeeRoles).size;
   return (
     <tr className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
       <td className="py-3 px-4">
@@ -76,6 +78,16 @@ function LeadRow({ lead }: { lead: Lead }) {
           <Badge tone="slate">not routed</Badge>
         )}
       </td>
+      <td className="py-3 px-4">
+        {committeeRoleCount > 0 ? (
+          <div className="space-y-1">
+            <Badge tone="purple">{committeeRoleCount} roles</Badge>
+            <div className="text-xs text-slate-400">{committeeRoles.slice(0, 2).join(" · ")}</div>
+          </div>
+        ) : (
+          <Badge tone="slate">single-threaded</Badge>
+        )}
+      </td>
       <td className="py-3 px-4">{lead.aiRiskFlags.length > 0 ? lead.aiRiskFlags.map(f => <Badge key={f} tone="red">{f}</Badge>) : <Badge tone="green">clear</Badge>}</td>
     </tr>
   );
@@ -90,7 +102,7 @@ function LeadTable() {
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead><tr className="border-b-2 border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500"><th className="py-2 px-4">Lead</th><th className="py-2 px-4">Status</th><th className="py-2 px-4">AI Score</th><th className="py-2 px-4">Confidence</th><th className="py-2 px-4">Value</th><th className="py-2 px-4">Owner</th><th className="py-2 px-4">Response SLA</th><th className="py-2 px-4">Risk Flags</th></tr></thead>
+          <thead><tr className="border-b-2 border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500"><th className="py-2 px-4">Lead</th><th className="py-2 px-4">Status</th><th className="py-2 px-4">AI Score</th><th className="py-2 px-4">Confidence</th><th className="py-2 px-4">Value</th><th className="py-2 px-4">Owner</th><th className="py-2 px-4">Response SLA</th><th className="py-2 px-4">Committee</th><th className="py-2 px-4">Risk Flags</th></tr></thead>
           <tbody>{[...demoLeads].sort((a, b) => b.aiScore - a.aiScore).map(l => <LeadRow key={l.id} lead={l} />)}</tbody>
         </table>
       </div>
