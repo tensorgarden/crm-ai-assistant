@@ -419,4 +419,56 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+
+  // ICP-fit guard: current CRM guidance treats fit as a gate rather than a
+  // small bonus that engagement can overwhelm.
+  it("keeps ICP assessments evidence-backed and timestamped", () => {
+    const validStatuses = ["strong", "partial", "out_of_profile"];
+
+    for (const lead of demoLeads) {
+      expect(validStatuses, `Lead ${lead.id} has invalid ICP fit status`).toContain(lead.icpFitAssessment.status);
+      expect(
+        lead.icpFitAssessment.evidence.length,
+        `Lead ${lead.id} has no evidence behind its ICP assessment`
+      ).toBeGreaterThanOrEqual(2);
+      expect(
+        lead.icpFitAssessment.evidence.every(item => item.trim().length >= 15),
+        `Lead ${lead.id} has weak ICP evidence`
+      ).toBe(true);
+      expect(
+        Number.isNaN(Date.parse(lead.icpFitAssessment.assessedAt)),
+        `Lead ${lead.id} has an invalid ICP assessment timestamp`
+      ).toBe(false);
+    }
+  });
+
+  it("requires strong ICP fit before active leads enter hot routing", () => {
+    const activeHotLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(activeHotLeads.length).toBeGreaterThanOrEqual(1);
+    for (const lead of activeHotLeads) {
+      expect(
+        lead.icpFitAssessment.status,
+        `Lead ${lead.id} is routed hot without strong ICP fit`
+      ).toBe("strong");
+    }
+  });
+
+  it("caps out-of-profile leads below sales-ready scoring", () => {
+    const outOfProfileLeads = demoLeads.filter(
+      lead => lead.icpFitAssessment.status === "out_of_profile"
+    );
+
+    expect(outOfProfileLeads.length, "No demo lead demonstrates the ICP gate").toBeGreaterThanOrEqual(1);
+    for (const lead of outOfProfileLeads) {
+      expect(lead.aiScore, `Lead ${lead.id} bypasses the ICP gate`).toBeLessThan(60);
+      expect(
+        lead.aiScoreFactors.some(factor => factor.category === "firmographic" && factor.impact === "negative"),
+        `Lead ${lead.id} lacks a negative firmographic explanation for its ICP gate`
+      ).toBe(true);
+    }
+  });
+
 });

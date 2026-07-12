@@ -14,6 +14,8 @@ export type ScoreFactorCategory = "firmographic" | "technographic" | "intent" | 
 
 export type ScoreStalenessRisk = "fresh" | "watch" | "decay_review";
 
+export type IcpFitStatus = "strong" | "partial" | "out_of_profile";
+
 export type BuyingCommitteeRole = "executive" | "operations" | "technical" | "finance" | "security" | "legal";
 
 export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
@@ -40,6 +42,12 @@ export interface BuyingCommitteeSignal {
   observedAt: string;
 }
 
+export interface IcpFitAssessment {
+  status: IcpFitStatus;
+  evidence: string[];
+  assessedAt: string;
+}
+
 export interface ScoreFactor {
   label: string;
   impact: "positive" | "negative";
@@ -61,6 +69,7 @@ export interface Lead {
   aiScoreLastUpdatedAt: string;
   aiScoreFactors: ScoreFactor[];
   aiRiskFlags: string[];
+  icpFitAssessment: IcpFitAssessment;
   buyingCommitteeSignals: BuyingCommitteeSignal[];
   scoreStalenessRisk: ScoreStalenessRisk;
   scoreStalenessReason: string | null;

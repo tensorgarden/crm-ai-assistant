@@ -50,6 +50,11 @@ export const demoLeads: Lead[] = [
       { label: "Proposal stage — close proximity", impact: "positive", category: "intent", weight: 17 },
     ],
     aiRiskFlags: [],
+    icpFitAssessment: {
+      status: "strong",
+      evidence: ["Enterprise logistics account", "VP Operations owns the workflow problem"],
+      assessedAt: "2026-06-07T14:25:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "operations", signal: "VP Operations reviewed the route-optimization proposal twice in the same buying window", observedAt: "2026-06-07T13:55:00Z" },
       { role: "finance", signal: "Finance director opened the multi-year pricing comparison before the proposal call", observedAt: "2026-06-07T14:05:00Z" },
@@ -91,6 +96,11 @@ export const demoLeads: Lead[] = [
       { label: "Budget unconfirmed", impact: "negative", category: "intent", weight: 14 },
     ],
     aiRiskFlags: ["budget_unconfirmed"],
+    icpFitAssessment: {
+      status: "strong",
+      evidence: ["Enterprise healthcare organization", "Director of IT owns security evaluation"],
+      assessedAt: "2026-06-08T10:55:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "technical", signal: "IT director requested a security-architecture demo for the evaluation team", observedAt: "2026-06-08T10:18:00Z" },
       { role: "security", signal: "CISO accepted the security review invite and added data-residency questions", observedAt: "2026-06-08T10:24:00Z" },
@@ -138,6 +148,11 @@ export const demoLeads: Lead[] = [
       { label: "Multiple stakeholders unaligned", impact: "negative", category: "intent", weight: 12 },
     ],
     aiRiskFlags: ["slow_response", "multiple_stakeholders", "score_decay_review"],
+    icpFitAssessment: {
+      status: "strong",
+      evidence: ["Fintech vertical matches target segment", "Sales Operations leader matches buyer persona"],
+      assessedAt: "2026-06-05T09:10:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "decay_review",
     scoreStalenessReason: "Slow response and no fresh intent since the last call mean this score needs decay before rep prioritization.",
@@ -170,6 +185,11 @@ export const demoLeads: Lead[] = [
       { label: "Low deal value ($48K)", impact: "negative", category: "firmographic", weight: 12 },
     ],
     aiRiskFlags: ["low_engagement", "no_pain_identified"],
+    icpFitAssessment: {
+      status: "strong",
+      evidence: ["Manufacturing vertical matches target segment", "COO owns the documented ERP workflow pain"],
+      assessedAt: "2026-06-09T08:25:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
@@ -207,6 +227,11 @@ export const demoLeads: Lead[] = [
       { label: "VP-level champion engaged", impact: "positive", category: "firmographic", weight: 11 },
     ],
     aiRiskFlags: [],
+    icpFitAssessment: {
+      status: "strong",
+      evidence: ["Enterprise aviation account", "VP Engineering is an executive technical buyer"],
+      assessedAt: "2026-06-08T16:10:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "executive", signal: "VP Engineering shared the final SOW with the executive sponsor", observedAt: "2026-06-08T15:42:00Z" },
       { role: "legal", signal: "Legal approved contract redlines before final routing", observedAt: "2026-06-08T15:50:00Z" },
@@ -254,6 +279,11 @@ export const demoLeads: Lead[] = [
       { label: "Mid-range deal ($72K)", impact: "negative", category: "firmographic", weight: 9 },
     ],
     aiRiskFlags: ["compliance_review_pending"],
+    icpFitAssessment: {
+      status: "strong",
+      evidence: ["Legal services vertical matches target segment", "Managing Partner has purchasing authority"],
+      assessedAt: "2026-06-06T11:55:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "watch",
     scoreStalenessReason: "Compliance review is pending, so keep the score visible but require a fresh buyer signal before escalation.",
@@ -285,6 +315,11 @@ export const demoLeads: Lead[] = [
       { label: "Onboarding scheduled", impact: "positive", category: "intent", weight: 10 },
     ],
     aiRiskFlags: [],
+    icpFitAssessment: {
+      status: "strong",
+      evidence: ["Enterprise energy account", "Chief Digital Officer owns transformation budget"],
+      assessedAt: "2026-06-01T09:25:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
@@ -317,6 +352,11 @@ export const demoLeads: Lead[] = [
       { label: "Small deal ($39K)", impact: "negative", category: "firmographic", weight: 12 },
     ],
     aiRiskFlags: ["went_with_competitor", "pricing_objection", "score_decay_review"],
+    icpFitAssessment: {
+      status: "partial",
+      evidence: ["Healthcare supply vertical is relevant", "Deal size falls below the core segment"],
+      assessedAt: "2026-05-28T15:10:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "decay_review",
     scoreStalenessReason: "Closed-lost intent should decay before any nurture reactivation because the last pricing objection is no longer fresh.",
@@ -348,6 +388,11 @@ export const demoLeads: Lead[] = [
       { label: "No buyer intent beyond anonymous browsing", impact: "negative", category: "intent", weight: 25 },
     ],
     aiRiskFlags: ["bot_engagement_noise", "no_buyer_verified", "low_engagement_quality"],
+    icpFitAssessment: {
+      status: "out_of_profile",
+      evidence: ["No target vertical confirmed", "No verified buyer role or account-size match"],
+      assessedAt: "2026-06-10T13:18:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
