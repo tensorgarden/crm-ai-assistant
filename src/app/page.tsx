@@ -52,6 +52,7 @@ function LeadRow({ lead }: { lead: Lead }) {
   const scoreColor = lead.aiScore >= 85 ? "text-emerald-600" : lead.aiScore >= 70 ? "text-amber-600" : "text-red-600";
   const confidenceTone = lead.aiScoreConfidence === "high" ? "green" : lead.aiScoreConfidence === "medium" ? "amber" : "red";
   const routingSlaTone = lead.routingSla?.status === "on_track" ? "green" : lead.routingSla?.status === "at_risk" ? "amber" : lead.routingSla?.status === "breached" ? "red" : "slate";
+  const qualificationTone = lead.qualificationGate.status === "eligible" ? "green" : lead.qualificationGate.status === "review_required" ? "amber" : "red";
   const committeeRoles = lead.buyingCommitteeSignals.map(signal => signal.role);
   const committeeRoleCount = new Set(committeeRoles).size;
   return (
@@ -61,6 +62,9 @@ function LeadRow({ lead }: { lead: Lead }) {
         <div className="text-xs text-slate-500 ml-6">{lead.company} · {lead.title}</div>
       </td>
       <td className="py-3 px-4"><Badge tone={lead.status === "won" ? "green" : lead.status === "lost" ? "red" : lead.status === "proposal" ? "purple" : lead.status === "qualified" ? "blue" : "amber"}>{lead.status}</Badge></td>
+      <td className="py-3 px-4" title={lead.qualificationGate.reason}>
+        <Badge tone={qualificationTone}>{lead.qualificationGate.status.replace("_", " ")}</Badge>
+      </td>
       <td className="py-3 px-4"><span className={`font-bold ${scoreColor}`}>{lead.aiScore}</span><span className="text-slate-400">/100</span></td>
       <td className="py-3 px-4">
         <Badge tone={confidenceTone}>{lead.aiScoreConfidence} confidence</Badge>
@@ -102,7 +106,7 @@ function LeadTable() {
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead><tr className="border-b-2 border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500"><th className="py-2 px-4">Lead</th><th className="py-2 px-4">Status</th><th className="py-2 px-4">AI Score</th><th className="py-2 px-4">Confidence</th><th className="py-2 px-4">Value</th><th className="py-2 px-4">Owner</th><th className="py-2 px-4">Response SLA</th><th className="py-2 px-4">Committee</th><th className="py-2 px-4">Risk Flags</th></tr></thead>
+          <thead><tr className="border-b-2 border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500"><th className="py-2 px-4">Lead</th><th className="py-2 px-4">Status</th><th className="py-2 px-4">Qualification</th><th className="py-2 px-4">AI Score</th><th className="py-2 px-4">Confidence</th><th className="py-2 px-4">Value</th><th className="py-2 px-4">Owner</th><th className="py-2 px-4">Response SLA</th><th className="py-2 px-4">Committee</th><th className="py-2 px-4">Risk Flags</th></tr></thead>
           <tbody>{[...demoLeads].sort((a, b) => b.aiScore - a.aiScore).map(l => <LeadRow key={l.id} lead={l} />)}</tbody>
         </table>
       </div>

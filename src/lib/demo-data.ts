@@ -55,6 +55,11 @@ export const demoLeads: Lead[] = [
       evidence: ["Enterprise logistics account", "VP Operations owns the workflow problem"],
       assessedAt: "2026-06-07T14:25:00Z",
     },
+    qualificationGate: {
+      status: "eligible",
+      reason: "Enterprise account and verified buyer intent pass the sales qualification gate.",
+      evaluatedAt: "2026-06-07T14:26:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "operations", signal: "VP Operations reviewed the route-optimization proposal twice in the same buying window", observedAt: "2026-06-07T13:55:00Z" },
       { role: "finance", signal: "Finance director opened the multi-year pricing comparison before the proposal call", observedAt: "2026-06-07T14:05:00Z" },
@@ -100,6 +105,11 @@ export const demoLeads: Lead[] = [
       status: "strong",
       evidence: ["Enterprise healthcare organization", "Director of IT owns security evaluation"],
       assessedAt: "2026-06-08T10:55:00Z",
+    },
+    qualificationGate: {
+      status: "eligible",
+      reason: "Verified enterprise buyer and multi-role evaluation pass the gate; budget remains a scoring risk.",
+      evaluatedAt: "2026-06-08T10:56:00Z",
     },
     buyingCommitteeSignals: [
       { role: "technical", signal: "IT director requested a security-architecture demo for the evaluation team", observedAt: "2026-06-08T10:18:00Z" },
@@ -153,6 +163,11 @@ export const demoLeads: Lead[] = [
       evidence: ["Fintech vertical matches target segment", "Sales Operations leader matches buyer persona"],
       assessedAt: "2026-06-05T09:10:00Z",
     },
+    qualificationGate: {
+      status: "review_required",
+      reason: "Strong ICP fit remains under review while stale intent and stakeholder alignment are refreshed.",
+      evaluatedAt: "2026-06-05T09:11:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "decay_review",
     scoreStalenessReason: "Slow response and no fresh intent since the last call mean this score needs decay before rep prioritization.",
@@ -189,6 +204,11 @@ export const demoLeads: Lead[] = [
       status: "strong",
       evidence: ["Manufacturing vertical matches target segment", "COO owns the documented ERP workflow pain"],
       assessedAt: "2026-06-09T08:25:00Z",
+    },
+    qualificationGate: {
+      status: "review_required",
+      reason: "Strong account fit is present, but no verified buyer intent exists for sales routing yet.",
+      evaluatedAt: "2026-06-09T08:26:00Z",
     },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "fresh",
@@ -231,6 +251,11 @@ export const demoLeads: Lead[] = [
       status: "strong",
       evidence: ["Enterprise aviation account", "VP Engineering is an executive technical buyer"],
       assessedAt: "2026-06-08T16:10:00Z",
+    },
+    qualificationGate: {
+      status: "eligible",
+      reason: "Enterprise referral, buying authority, and contract-ready intent pass the qualification gate.",
+      evaluatedAt: "2026-06-08T16:11:00Z",
     },
     buyingCommitteeSignals: [
       { role: "executive", signal: "VP Engineering shared the final SOW with the executive sponsor", observedAt: "2026-06-08T15:42:00Z" },
@@ -284,6 +309,11 @@ export const demoLeads: Lead[] = [
       evidence: ["Legal services vertical matches target segment", "Managing Partner has purchasing authority"],
       assessedAt: "2026-06-06T11:55:00Z",
     },
+    qualificationGate: {
+      status: "review_required",
+      reason: "Buyer fit is verified, but the pending compliance review requires qualification review.",
+      evaluatedAt: "2026-06-06T11:56:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "watch",
     scoreStalenessReason: "Compliance review is pending, so keep the score visible but require a fresh buyer signal before escalation.",
@@ -319,6 +349,11 @@ export const demoLeads: Lead[] = [
       status: "strong",
       evidence: ["Enterprise energy account", "Chief Digital Officer owns transformation budget"],
       assessedAt: "2026-06-01T09:25:00Z",
+    },
+    qualificationGate: {
+      status: "eligible",
+      reason: "Enterprise buyer authority and closed-won evidence satisfy the qualification gate.",
+      evaluatedAt: "2026-06-01T09:26:00Z",
     },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "fresh",
@@ -357,6 +392,11 @@ export const demoLeads: Lead[] = [
       evidence: ["Healthcare supply vertical is relevant", "Deal size falls below the core segment"],
       assessedAt: "2026-05-28T15:10:00Z",
     },
+    qualificationGate: {
+      status: "disqualified",
+      reason: "Closed-lost opportunity is excluded from active sales routing until a new buying cycle is verified.",
+      evaluatedAt: "2026-05-28T15:11:00Z",
+    },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "decay_review",
     scoreStalenessReason: "Closed-lost intent should decay before any nurture reactivation because the last pricing objection is no longer fresh.",
@@ -392,6 +432,11 @@ export const demoLeads: Lead[] = [
       status: "out_of_profile",
       evidence: ["No target vertical confirmed", "No verified buyer role or account-size match"],
       assessedAt: "2026-06-10T13:18:00Z",
+    },
+    qualificationGate: {
+      status: "disqualified",
+      reason: "Automated scanner traffic and no verified buyer identity make this record ineligible for sales routing.",
+      evaluatedAt: "2026-06-10T13:19:00Z",
     },
     buyingCommitteeSignals: [],
     scoreStalenessRisk: "fresh",

@@ -20,6 +20,14 @@ export type BuyingCommitteeRole = "executive" | "operations" | "technical" | "fi
 
 export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
 
+export type QualificationGateStatus = "eligible" | "review_required" | "disqualified";
+
+export interface QualificationGate {
+  status: QualificationGateStatus;
+  reason: string;
+  evaluatedAt: string;
+}
+
 export interface RepFeedback {
   repId: string;
   action: RepFeedbackAction;
@@ -70,6 +78,7 @@ export interface Lead {
   aiScoreFactors: ScoreFactor[];
   aiRiskFlags: string[];
   icpFitAssessment: IcpFitAssessment;
+  qualificationGate: QualificationGate;
   buyingCommitteeSignals: BuyingCommitteeSignal[];
   scoreStalenessRisk: ScoreStalenessRisk;
   scoreStalenessReason: string | null;

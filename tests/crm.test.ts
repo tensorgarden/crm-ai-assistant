@@ -471,4 +471,57 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+
+  // Negative-score math should not stand in for an explicit qualification state.
+  // Hard disqualifiers need a visible, reasoned gate so they never reach a rep queue.
+  it("keeps qualification gates explicit, explained, and timestamped", () => {
+    const validStatuses = ["eligible", "review_required", "disqualified"];
+
+    for (const lead of demoLeads) {
+      expect(
+        validStatuses,
+        `Lead ${lead.id} has invalid qualification status ${lead.qualificationGate.status}`
+      ).toContain(lead.qualificationGate.status);
+      expect(
+        lead.qualificationGate.reason.trim().length,
+        `Lead ${lead.id} has no meaningful qualification reason`
+      ).toBeGreaterThanOrEqual(30);
+      expect(
+        Number.isNaN(Date.parse(lead.qualificationGate.evaluatedAt)),
+        `Lead ${lead.id} has an invalid qualification timestamp`
+      ).toBe(false);
+    }
+  });
+
+  it("keeps hard-disqualified records out of sales routing", () => {
+    const disqualifiedLeads = demoLeads.filter(
+      lead => lead.qualificationGate.status === "disqualified"
+    );
+
+    expect(
+      disqualifiedLeads.length,
+      "No demo leads show an explicit hard-disqualification gate"
+    ).toBeGreaterThanOrEqual(1);
+
+    for (const lead of disqualifiedLeads) {
+      expect(lead.aiScore, `Lead ${lead.id} is disqualified but still scores sales-ready`).toBeLessThan(70);
+      expect(lead.routingSla, `Lead ${lead.id} is disqualified but still has a routing SLA`).toBeNull();
+      expect(lead.nextFollowUpId, `Lead ${lead.id} is disqualified but still has a pending follow-up`).toBeNull();
+    }
+  });
+
+  it("requires active hot leads to pass the qualification gate before routing", () => {
+    const activeHotLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(activeHotLeads.length).toBeGreaterThanOrEqual(1);
+    for (const lead of activeHotLeads) {
+      expect(
+        lead.qualificationGate.status,
+        `Lead ${lead.id} is routed hot without passing qualification`
+      ).toBe("eligible");
+    }
+  });
+
 });
