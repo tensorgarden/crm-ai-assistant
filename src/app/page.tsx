@@ -86,7 +86,7 @@ function LeadRow({ lead }: { lead: Lead }) {
         {committeeRoleCount > 0 ? (
           <div className="space-y-1">
             <Badge tone="purple">{committeeRoleCount} roles</Badge>
-            <div className="text-xs text-slate-400">{committeeRoles.slice(0, 2).join(" · ")}</div>
+            <div className="text-xs text-slate-400">{committeeRoles.slice(0, 2).map(role => role.replaceAll("_", " ")).join(" · ")}</div>
           </div>
         ) : (
           <Badge tone="slate">single-threaded</Badge>

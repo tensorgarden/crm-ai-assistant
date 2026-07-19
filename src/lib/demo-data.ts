@@ -61,6 +61,7 @@ export const demoLeads: Lead[] = [
       evaluatedAt: "2026-06-07T14:26:00Z",
     },
     buyingCommitteeSignals: [
+      { role: "decision_maker", signal: "COO confirmed final budget authority and joined the proposal decision call", observedAt: "2026-06-07T13:48:00Z" },
       { role: "operations", signal: "VP Operations reviewed the route-optimization proposal twice in the same buying window", observedAt: "2026-06-07T13:55:00Z" },
       { role: "finance", signal: "Finance director opened the multi-year pricing comparison before the proposal call", observedAt: "2026-06-07T14:05:00Z" },
       { role: "technical", signal: "Integration owner revisited API documentation before scope revisions", observedAt: "2026-06-07T14:08:00Z" },
@@ -112,6 +113,7 @@ export const demoLeads: Lead[] = [
       evaluatedAt: "2026-06-08T10:56:00Z",
     },
     buyingCommitteeSignals: [
+      { role: "decision_maker", signal: "CIO joined the evaluation and confirmed authority over the platform purchase", observedAt: "2026-06-08T10:10:00Z" },
       { role: "technical", signal: "IT director requested a security-architecture demo for the evaluation team", observedAt: "2026-06-08T10:18:00Z" },
       { role: "security", signal: "CISO accepted the security review invite and added data-residency questions", observedAt: "2026-06-08T10:24:00Z" },
     ],
@@ -258,6 +260,7 @@ export const demoLeads: Lead[] = [
       evaluatedAt: "2026-06-08T16:11:00Z",
     },
     buyingCommitteeSignals: [
+      { role: "decision_maker", signal: "CFO confirmed final budget approval and joined the contract decision call", observedAt: "2026-06-08T15:35:00Z" },
       { role: "executive", signal: "VP Engineering shared the final SOW with the executive sponsor", observedAt: "2026-06-08T15:42:00Z" },
       { role: "legal", signal: "Legal approved contract redlines before final routing", observedAt: "2026-06-08T15:50:00Z" },
       { role: "finance", signal: "Procurement confirmed the SOW sign-off path for the partner-sourced deal", observedAt: "2026-06-08T15:57:00Z" },

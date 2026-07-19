@@ -144,7 +144,7 @@ describe("CRM AI Assistant — demo data integrity", () => {
   // Account-based buying committees are a stronger intent signal than one person
   // clicking around; hot leads should show multiple roles before reps trust the score.
   it("buying committee signals are timestamped and role-tagged", () => {
-    const validRoles = ["executive", "operations", "technical", "finance", "security", "legal"];
+    const validRoles = ["decision_maker", "executive", "operations", "technical", "finance", "security", "legal"];
     const leadsWithCommitteeSignals = demoLeads.filter(lead => lead.buyingCommitteeSignals.length > 0);
 
     expect(
@@ -178,6 +178,34 @@ describe("CRM AI Assistant — demo data integrity", () => {
         lead.aiRiskFlags.includes("bot_engagement_noise"),
         `Lead ${lead.id} should not be routed hot from scanner or vanity engagement noise`
       ).toBe(false);
+    }
+  });
+
+  it("requires verified decision-maker involvement before hot-lead routing", () => {
+    const activeHighIntentLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(
+      activeHighIntentLeads.length,
+      "No active high-intent leads found for decision-maker coverage"
+    ).toBeGreaterThanOrEqual(1);
+
+    for (const lead of activeHighIntentLeads) {
+      const decisionMakerSignals = lead.buyingCommitteeSignals.filter(
+        signal => signal.role === "decision_maker"
+      );
+
+      expect(
+        decisionMakerSignals.length,
+        `Lead ${lead.id} is hot but has no verified decision-maker involvement`
+      ).toBeGreaterThanOrEqual(1);
+      expect(
+        decisionMakerSignals.every(
+          signal => Date.parse(signal.observedAt) <= Date.parse(lead.aiScoreLastUpdatedAt)
+        ),
+        `Lead ${lead.id} was scored hot before its decision-maker signal was observed`
+      ).toBe(true);
     }
   });
 

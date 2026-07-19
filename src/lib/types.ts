@@ -16,7 +16,7 @@ export type ScoreStalenessRisk = "fresh" | "watch" | "decay_review";
 
 export type IcpFitStatus = "strong" | "partial" | "out_of_profile";
 
-export type BuyingCommitteeRole = "executive" | "operations" | "technical" | "finance" | "security" | "legal";
+export type BuyingCommitteeRole = "decision_maker" | "executive" | "operations" | "technical" | "finance" | "security" | "legal";
 
 export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
 
