@@ -53,6 +53,7 @@ function LeadRow({ lead }: { lead: Lead }) {
   const confidenceTone = lead.aiScoreConfidence === "high" ? "green" : lead.aiScoreConfidence === "medium" ? "amber" : "red";
   const routingSlaTone = lead.routingSla?.status === "on_track" ? "green" : lead.routingSla?.status === "at_risk" ? "amber" : lead.routingSla?.status === "breached" ? "red" : "slate";
   const qualificationTone = lead.qualificationGate.status === "eligible" ? "green" : lead.qualificationGate.status === "review_required" ? "amber" : "red";
+  const committeeConsensusTone = lead.buyingCommitteeConsensus?.status === "aligned" ? "green" : lead.buyingCommitteeConsensus?.status === "mixed" ? "amber" : "red";
   const committeeRoles = lead.buyingCommitteeSignals.map(signal => signal.role);
   const committeeRoleCount = new Set(committeeRoles).size;
   return (
@@ -87,6 +88,11 @@ function LeadRow({ lead }: { lead: Lead }) {
           <div className="space-y-1">
             <Badge tone="purple">{committeeRoleCount} roles</Badge>
             <div className="text-xs text-slate-400">{committeeRoles.slice(0, 2).map(role => role.replaceAll("_", " ")).join(" · ")}</div>
+            {lead.buyingCommitteeConsensus && (
+              <div title={lead.buyingCommitteeConsensus.summary}>
+                <Badge tone={committeeConsensusTone}>{lead.buyingCommitteeConsensus.status} consensus</Badge>
+              </div>
+            )}
           </div>
         ) : (
           <Badge tone="slate">single-threaded</Badge>

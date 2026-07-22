@@ -209,6 +209,72 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+  // Buying-group coverage is not enough on its own: current research shows
+  // unresolved stakeholder conflict can undermine otherwise qualified deals.
+  it("keeps buying-group consensus reviews evidence-backed and timestamped", () => {
+    const reviewedLeads = demoLeads.filter(lead => lead.buyingCommitteeConsensus !== null);
+    const validStatuses = ["aligned", "mixed", "conflict"];
+
+    expect(reviewedLeads.length, "No demo leads show buying-group consensus review").toBeGreaterThanOrEqual(1);
+
+    for (const lead of reviewedLeads) {
+      const consensus = lead.buyingCommitteeConsensus;
+      expect(consensus).not.toBeNull();
+      if (!consensus) {
+        continue;
+      }
+
+      expect(validStatuses, `Lead ${lead.id} has invalid consensus status`).toContain(consensus.status);
+      expect(consensus.summary.trim().length, `Lead ${lead.id} lacks a meaningful consensus summary`).toBeGreaterThanOrEqual(40);
+      expect(Number.isNaN(Date.parse(consensus.assessedAt)), `Lead ${lead.id} has invalid consensus assessedAt`).toBe(false);
+      expect(
+        Date.parse(consensus.assessedAt),
+        `Lead ${lead.id} was scored before its buying-group consensus review`
+      ).toBeLessThanOrEqual(Date.parse(lead.aiScoreLastUpdatedAt));
+
+      if (consensus.status === "aligned") {
+        expect(consensus.unresolvedConcerns, `Lead ${lead.id} is aligned but still lists blockers`).toHaveLength(0);
+      } else {
+        expect(consensus.unresolvedConcerns.length, `Lead ${lead.id} has unresolved consensus risk without named concerns`).toBeGreaterThanOrEqual(1);
+        expect(
+          consensus.unresolvedConcerns.every(concern => concern.trim().length >= 20),
+          `Lead ${lead.id} has a weak buying-group concern`
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("requires aligned buying-group consensus before active hot routing", () => {
+    const activeHotLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(activeHotLeads.length, "No active hot leads found for consensus coverage").toBeGreaterThanOrEqual(1);
+    for (const lead of activeHotLeads) {
+      expect(
+        lead.buyingCommitteeConsensus?.status,
+        `Lead ${lead.id} is routed hot without aligned buying-group consensus`
+      ).toBe("aligned");
+      expect(
+        lead.buyingCommitteeConsensus?.unresolvedConcerns,
+        `Lead ${lead.id} is routed hot with unresolved buying-group concerns`
+      ).toHaveLength(0);
+    }
+  });
+
+  it("keeps conflicted buying groups in review instead of sales routing", () => {
+    const conflictedLeads = demoLeads.filter(
+      lead => lead.buyingCommitteeConsensus?.status === "conflict"
+    );
+
+    expect(conflictedLeads.length, "No demo lead shows buying-group conflict").toBeGreaterThanOrEqual(1);
+    for (const lead of conflictedLeads) {
+      expect(lead.aiRiskFlags, `Lead ${lead.id} lacks a visible conflict risk`).toContain("buying_group_conflict");
+      expect(lead.qualificationGate.status, `Lead ${lead.id} bypasses review despite buying-group conflict`).toBe("review_required");
+      expect(lead.routingSla, `Lead ${lead.id} is routed despite unresolved buying-group conflict`).toBeNull();
+    }
+  });
+
   // Pipeline hygiene: closed deals should not carry pending follow-ups.
   // Outdated stage data is the second-most-common AI scoring quality issue.
   it("won and lost leads have no pending follow-up references", () => {

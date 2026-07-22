@@ -18,6 +18,8 @@ export type IcpFitStatus = "strong" | "partial" | "out_of_profile";
 
 export type BuyingCommitteeRole = "decision_maker" | "executive" | "operations" | "technical" | "finance" | "security" | "legal";
 
+export type BuyingCommitteeConsensusStatus = "aligned" | "mixed" | "conflict";
+
 export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
 
 export type QualificationGateStatus = "eligible" | "review_required" | "disqualified";
@@ -50,6 +52,13 @@ export interface BuyingCommitteeSignal {
   observedAt: string;
 }
 
+export interface BuyingCommitteeConsensus {
+  status: BuyingCommitteeConsensusStatus;
+  summary: string;
+  assessedAt: string;
+  unresolvedConcerns: string[];
+}
+
 export interface IcpFitAssessment {
   status: IcpFitStatus;
   evidence: string[];
@@ -80,6 +89,7 @@ export interface Lead {
   icpFitAssessment: IcpFitAssessment;
   qualificationGate: QualificationGate;
   buyingCommitteeSignals: BuyingCommitteeSignal[];
+  buyingCommitteeConsensus: BuyingCommitteeConsensus | null;
   scoreStalenessRisk: ScoreStalenessRisk;
   scoreStalenessReason: string | null;
   repFeedback: RepFeedback | null;
