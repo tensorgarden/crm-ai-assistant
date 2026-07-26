@@ -20,6 +20,8 @@ export type BuyingCommitteeRole = "decision_maker" | "executive" | "operations" 
 
 export type BuyingCommitteeConsensusStatus = "aligned" | "mixed" | "conflict";
 
+export type ChampionReadinessStatus = "validated" | "needs_enablement" | "absent";
+
 export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
 
 export type QualificationGateStatus = "eligible" | "review_required" | "disqualified";
@@ -59,6 +61,14 @@ export interface BuyingCommitteeConsensus {
   unresolvedConcerns: string[];
 }
 
+export interface ChampionReadiness {
+  status: ChampionReadinessStatus;
+  contactRole: BuyingCommitteeRole | null;
+  evidence: string[];
+  internalCaseSharedAt: string | null;
+  assessedAt: string;
+}
+
 export interface IcpFitAssessment {
   status: IcpFitStatus;
   evidence: string[];
@@ -88,6 +98,7 @@ export interface Lead {
   aiRiskFlags: string[];
   icpFitAssessment: IcpFitAssessment;
   qualificationGate: QualificationGate;
+  championReadiness: ChampionReadiness;
   buyingCommitteeSignals: BuyingCommitteeSignal[];
   buyingCommitteeConsensus: BuyingCommitteeConsensus | null;
   scoreStalenessRisk: ScoreStalenessRisk;

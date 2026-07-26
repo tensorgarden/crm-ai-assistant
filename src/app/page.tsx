@@ -54,6 +54,7 @@ function LeadRow({ lead }: { lead: Lead }) {
   const routingSlaTone = lead.routingSla?.status === "on_track" ? "green" : lead.routingSla?.status === "at_risk" ? "amber" : lead.routingSla?.status === "breached" ? "red" : "slate";
   const qualificationTone = lead.qualificationGate.status === "eligible" ? "green" : lead.qualificationGate.status === "review_required" ? "amber" : "red";
   const committeeConsensusTone = lead.buyingCommitteeConsensus?.status === "aligned" ? "green" : lead.buyingCommitteeConsensus?.status === "mixed" ? "amber" : "red";
+  const championTone = lead.championReadiness.status === "validated" ? "green" : lead.championReadiness.status === "needs_enablement" ? "amber" : "red";
   const committeeRoles = lead.buyingCommitteeSignals.map(signal => signal.role);
   const committeeRoleCount = new Set(committeeRoles).size;
   return (
@@ -84,19 +85,24 @@ function LeadRow({ lead }: { lead: Lead }) {
         )}
       </td>
       <td className="py-3 px-4">
-        {committeeRoleCount > 0 ? (
-          <div className="space-y-1">
-            <Badge tone="purple">{committeeRoleCount} roles</Badge>
-            <div className="text-xs text-slate-400">{committeeRoles.slice(0, 2).map(role => role.replaceAll("_", " ")).join(" · ")}</div>
-            {lead.buyingCommitteeConsensus && (
-              <div title={lead.buyingCommitteeConsensus.summary}>
-                <Badge tone={committeeConsensusTone}>{lead.buyingCommitteeConsensus.status} consensus</Badge>
-              </div>
-            )}
+        <div className="space-y-1">
+          <div title={lead.championReadiness.evidence.join(" · ")}>
+            <Badge tone={championTone}>{lead.championReadiness.status.replace("_", " ")} champion</Badge>
           </div>
-        ) : (
-          <Badge tone="slate">single-threaded</Badge>
-        )}
+          {committeeRoleCount > 0 ? (
+            <>
+              <Badge tone="purple">{committeeRoleCount} roles</Badge>
+              <div className="text-xs text-slate-400">{committeeRoles.slice(0, 2).map(role => role.replaceAll("_", " ")).join(" · ")}</div>
+              {lead.buyingCommitteeConsensus && (
+                <div title={lead.buyingCommitteeConsensus.summary}>
+                  <Badge tone={committeeConsensusTone}>{lead.buyingCommitteeConsensus.status} consensus</Badge>
+                </div>
+              )}
+            </>
+          ) : (
+            <Badge tone="slate">single-threaded</Badge>
+          )}
+        </div>
       </td>
       <td className="py-3 px-4">{lead.aiRiskFlags.length > 0 ? lead.aiRiskFlags.map(f => <Badge key={f} tone="red">{f}</Badge>) : <Badge tone="green">clear</Badge>}</td>
     </tr>

@@ -275,6 +275,69 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+  // Gong's 2026 executive-selling research warns that stakeholder count alone
+  // does not prove a contact can mobilize the buying group or sell internally.
+  it("keeps internal champion readiness evidence-backed and timestamped", () => {
+    const validStatuses = ["validated", "needs_enablement", "absent"];
+    const reviewedLeads = demoLeads.filter(lead => lead.championReadiness.evidence.length > 0);
+
+    expect(reviewedLeads.length, "No demo leads show internal champion review").toBe(demoLeads.length);
+    for (const lead of reviewedLeads) {
+      const readiness = lead.championReadiness;
+      expect(validStatuses, `Lead ${lead.id} has invalid champion readiness`).toContain(readiness.status);
+      expect(
+        readiness.evidence.every(item => item.trim().length >= 30),
+        `Lead ${lead.id} has weak champion-readiness evidence`
+      ).toBe(true);
+      expect(Number.isNaN(Date.parse(readiness.assessedAt)), `Lead ${lead.id} has invalid champion assessment time`).toBe(false);
+
+      if (readiness.status === "validated") {
+        expect(readiness.contactRole, `Lead ${lead.id} has a validated champion without a role`).not.toBeNull();
+        expect(readiness.evidence.length, `Lead ${lead.id} lacks corroborating champion evidence`).toBeGreaterThanOrEqual(2);
+        expect(readiness.internalCaseSharedAt, `Lead ${lead.id} has no proof the champion shared the internal case`).not.toBeNull();
+      }
+    }
+  });
+
+  it("requires a validated internal champion before active hot routing", () => {
+    const activeHotLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(activeHotLeads.length, "No active hot leads found for champion coverage").toBeGreaterThanOrEqual(1);
+    for (const lead of activeHotLeads) {
+      const readiness = lead.championReadiness;
+      expect(readiness.status, `Lead ${lead.id} is hot without a validated champion`).toBe("validated");
+      expect(readiness.internalCaseSharedAt, `Lead ${lead.id} is hot without internal-case sharing evidence`).not.toBeNull();
+      expect(
+        Date.parse(readiness.assessedAt),
+        `Lead ${lead.id} was scored hot before champion validation`
+      ).toBeLessThanOrEqual(Date.parse(lead.aiScoreLastUpdatedAt));
+      expect(
+        Date.parse(readiness.internalCaseSharedAt ?? ""),
+        `Lead ${lead.id} was scored hot before the champion shared the internal case`
+      ).toBeLessThanOrEqual(Date.parse(lead.aiScoreLastUpdatedAt));
+    }
+  });
+
+  it("keeps absent or unenabled champions out of active routing", () => {
+    const unreadyActiveLeads = demoLeads.filter(
+      lead =>
+        lead.status !== "won" &&
+        lead.status !== "lost" &&
+        lead.championReadiness.status !== "validated"
+    );
+
+    expect(unreadyActiveLeads.length, "No active demo lead shows champion readiness risk").toBeGreaterThanOrEqual(1);
+    for (const lead of unreadyActiveLeads) {
+      expect(
+        lead.qualificationGate.status,
+        `Lead ${lead.id} is eligible despite unresolved champion readiness`
+      ).not.toBe("eligible");
+      expect(lead.routingSla, `Lead ${lead.id} is routed without a ready internal champion`).toBeNull();
+    }
+  });
+
   // Pipeline hygiene: closed deals should not carry pending follow-ups.
   // Outdated stage data is the second-most-common AI scoring quality issue.
   it("won and lost leads have no pending follow-up references", () => {

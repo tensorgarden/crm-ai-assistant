@@ -60,6 +60,16 @@ export const demoLeads: Lead[] = [
       reason: "Enterprise account and verified buyer intent pass the sales qualification gate.",
       evaluatedAt: "2026-06-07T14:26:00Z",
     },
+    championReadiness: {
+      status: "validated",
+      contactRole: "operations",
+      evidence: [
+        "VP Operations introduced finance and technical owners into the evaluation",
+        "Co-authored a quantified route-cost business case for internal review",
+      ],
+      internalCaseSharedAt: "2026-06-07T14:09:00Z",
+      assessedAt: "2026-06-07T14:12:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "decision_maker", signal: "COO confirmed final budget authority and joined the proposal decision call", observedAt: "2026-06-07T13:48:00Z" },
       { role: "operations", signal: "VP Operations reviewed the route-optimization proposal twice in the same buying window", observedAt: "2026-06-07T13:55:00Z" },
@@ -117,6 +127,16 @@ export const demoLeads: Lead[] = [
       status: "eligible",
       reason: "Verified enterprise buyer and multi-role evaluation pass the gate; budget remains a scoring risk.",
       evaluatedAt: "2026-06-08T10:56:00Z",
+    },
+    championReadiness: {
+      status: "validated",
+      contactRole: "technical",
+      evidence: [
+        "IT director convened security and executive stakeholders for the evaluation",
+        "Circulated the security architecture brief with buyer-specific data residency questions",
+      ],
+      internalCaseSharedAt: "2026-06-08T10:36:00Z",
+      assessedAt: "2026-06-08T10:50:00Z",
     },
     buyingCommitteeSignals: [
       { role: "decision_maker", signal: "CIO joined the evaluation and confirmed authority over the platform purchase", observedAt: "2026-06-08T10:10:00Z" },
@@ -182,6 +202,15 @@ export const demoLeads: Lead[] = [
       reason: "Strong ICP fit remains under review while stale intent and stakeholder alignment are refreshed.",
       evaluatedAt: "2026-06-05T09:11:00Z",
     },
+    championReadiness: {
+      status: "needs_enablement",
+      contactRole: "operations",
+      evidence: [
+        "Sales operations advocates for rollout but has not resolved finance objections or shared an agreed business case",
+      ],
+      internalCaseSharedAt: null,
+      assessedAt: "2026-06-05T09:08:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "operations", signal: "Sales operations requested a rapid rollout to address forecast visibility gaps", observedAt: "2026-06-05T08:45:00Z" },
       { role: "finance", signal: "Finance challenged the commercial case and implementation timing", observedAt: "2026-06-05T08:55:00Z" },
@@ -233,6 +262,15 @@ export const demoLeads: Lead[] = [
       reason: "Strong account fit is present, but no verified buyer intent exists for sales routing yet.",
       evaluatedAt: "2026-06-09T08:26:00Z",
     },
+    championReadiness: {
+      status: "absent",
+      contactRole: null,
+      evidence: [
+        "Cold outbound account has no engaged internal advocate or buyer-led introduction",
+      ],
+      internalCaseSharedAt: null,
+      assessedAt: "2026-06-09T08:28:00Z",
+    },
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "fresh",
@@ -280,6 +318,16 @@ export const demoLeads: Lead[] = [
       status: "eligible",
       reason: "Enterprise referral, buying authority, and contract-ready intent pass the qualification gate.",
       evaluatedAt: "2026-06-08T16:11:00Z",
+    },
+    championReadiness: {
+      status: "validated",
+      contactRole: "executive",
+      evidence: [
+        "VP Engineering introduced legal, finance, and final budget authority into the deal",
+        "Circulated the final SOW and sign-off path for internal approval",
+      ],
+      internalCaseSharedAt: "2026-06-08T15:58:00Z",
+      assessedAt: "2026-06-08T16:08:00Z",
     },
     buyingCommitteeSignals: [
       { role: "decision_maker", signal: "CFO confirmed final budget approval and joined the contract decision call", observedAt: "2026-06-08T15:35:00Z" },
@@ -345,6 +393,15 @@ export const demoLeads: Lead[] = [
       reason: "Buyer fit is verified, but the pending compliance review requires qualification review.",
       evaluatedAt: "2026-06-06T11:56:00Z",
     },
+    championReadiness: {
+      status: "needs_enablement",
+      contactRole: "executive",
+      evidence: [
+        "Managing Partner requested compliance material but has not convened reviewers or circulated an internal case",
+      ],
+      internalCaseSharedAt: null,
+      assessedAt: "2026-06-06T11:58:00Z",
+    },
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "watch",
@@ -386,6 +443,16 @@ export const demoLeads: Lead[] = [
       status: "eligible",
       reason: "Enterprise buyer authority and closed-won evidence satisfy the qualification gate.",
       evaluatedAt: "2026-06-01T09:26:00Z",
+    },
+    championReadiness: {
+      status: "validated",
+      contactRole: "executive",
+      evidence: [
+        "Chief Digital Officer coordinated the executive buying group through final approval",
+        "Shared the quantified transformation case before the closed-won decision",
+      ],
+      internalCaseSharedAt: "2026-06-01T08:50:00Z",
+      assessedAt: "2026-06-01T09:27:00Z",
     },
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
@@ -430,6 +497,15 @@ export const demoLeads: Lead[] = [
       reason: "Closed-lost opportunity is excluded from active sales routing until a new buying cycle is verified.",
       evaluatedAt: "2026-05-28T15:11:00Z",
     },
+    championReadiness: {
+      status: "absent",
+      contactRole: null,
+      evidence: [
+        "No internal advocate remained after the buyer selected a competitor on price",
+      ],
+      internalCaseSharedAt: null,
+      assessedAt: "2026-05-28T15:12:00Z",
+    },
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "decay_review",
@@ -471,6 +547,15 @@ export const demoLeads: Lead[] = [
       status: "disqualified",
       reason: "Automated scanner traffic and no verified buyer identity make this record ineligible for sales routing.",
       evaluatedAt: "2026-06-10T13:19:00Z",
+    },
+    championReadiness: {
+      status: "absent",
+      contactRole: null,
+      evidence: [
+        "Scanner-like activity produced no verified buyer or internal advocate",
+      ],
+      internalCaseSharedAt: null,
+      assessedAt: "2026-06-10T13:19:00Z",
     },
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
