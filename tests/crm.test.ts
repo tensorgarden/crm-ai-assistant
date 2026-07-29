@@ -338,6 +338,54 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+  // Salesforce highlights lengthy cycles, expansive buying committees, and competing
+  // priorities as common deal risks; a shared action plan makes the next commitment explicit.
+  it("gives every active proposal a mutual action plan", () => {
+    const activeProposals = demoLeads.filter(lead => lead.status === "proposal");
+
+    expect(activeProposals.length, "No active proposals demonstrate action-plan coverage").toBeGreaterThanOrEqual(1);
+    for (const lead of activeProposals) {
+      expect(lead.mutualActionPlan, `Proposal ${lead.id} has no mutual action plan`).not.toBeNull();
+    }
+  });
+
+  it("keeps mutual action-plan milestones buyer-visible and timestamped", () => {
+    const plannedLeads = demoLeads.filter(lead => lead.mutualActionPlan !== null);
+    const validStatuses = ["on_track", "at_risk", "blocked"];
+    const validOwners = ["buyer", "seller", "shared"];
+
+    expect(plannedLeads.length, "No demo leads show a mutual action plan").toBeGreaterThanOrEqual(2);
+    for (const lead of plannedLeads) {
+      const plan = lead.mutualActionPlan;
+      expect(plan).not.toBeNull();
+      if (!plan) continue;
+
+      expect(validStatuses).toContain(plan.status);
+      expect(validOwners).toContain(plan.milestoneOwner);
+      expect(plan.nextMilestone.trim().length, `Lead ${lead.id} has a weak next milestone`).toBeGreaterThanOrEqual(30);
+      expect(Number.isNaN(Date.parse(plan.dueAt)), `Lead ${lead.id} has an invalid milestone due date`).toBe(false);
+      expect(Number.isNaN(Date.parse(plan.updatedAt)), `Lead ${lead.id} has an invalid plan update time`).toBe(false);
+      expect(Date.parse(plan.updatedAt), `Lead ${lead.id} score predates its action-plan update`).toBeLessThanOrEqual(
+        Date.parse(lead.aiScoreLastUpdatedAt)
+      );
+    }
+  });
+
+  it("surfaces blockers on at-risk action plans instead of showing false momentum", () => {
+    const atRiskPlans = demoLeads.filter(lead => lead.mutualActionPlan?.status === "at_risk");
+
+    expect(atRiskPlans.length, "No demo lead shows an at-risk action plan").toBeGreaterThanOrEqual(1);
+    for (const lead of atRiskPlans) {
+      const plan = lead.mutualActionPlan;
+      expect(plan).not.toBeNull();
+      if (!plan) continue;
+
+      expect(plan.blockers.length, `Lead ${lead.id} is at risk without a named blocker`).toBeGreaterThanOrEqual(1);
+      expect(plan.blockers.every(blocker => blocker.trim().length >= 25)).toBe(true);
+      expect(plan.milestoneOwner, `Lead ${lead.id} uses a seller-only step as mutual progress`).not.toBe("seller");
+    }
+  });
+
   // Pipeline hygiene: closed deals should not carry pending follow-ups.
   // Outdated stage data is the second-most-common AI scoring quality issue.
   it("won and lost leads have no pending follow-up references", () => {

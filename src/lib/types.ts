@@ -22,6 +22,10 @@ export type BuyingCommitteeConsensusStatus = "aligned" | "mixed" | "conflict";
 
 export type ChampionReadinessStatus = "validated" | "needs_enablement" | "absent";
 
+export type MutualActionPlanStatus = "on_track" | "at_risk" | "blocked";
+
+export type MilestoneOwner = "buyer" | "seller" | "shared";
+
 export type RoutingSlaStatus = "on_track" | "at_risk" | "breached";
 
 export type QualificationGateStatus = "eligible" | "review_required" | "disqualified";
@@ -69,6 +73,15 @@ export interface ChampionReadiness {
   assessedAt: string;
 }
 
+export interface MutualActionPlan {
+  status: MutualActionPlanStatus;
+  nextMilestone: string;
+  milestoneOwner: MilestoneOwner;
+  dueAt: string;
+  blockers: string[];
+  updatedAt: string;
+}
+
 export interface IcpFitAssessment {
   status: IcpFitStatus;
   evidence: string[];
@@ -99,6 +112,7 @@ export interface Lead {
   icpFitAssessment: IcpFitAssessment;
   qualificationGate: QualificationGate;
   championReadiness: ChampionReadiness;
+  mutualActionPlan: MutualActionPlan | null;
   buyingCommitteeSignals: BuyingCommitteeSignal[];
   buyingCommitteeConsensus: BuyingCommitteeConsensus | null;
   scoreStalenessRisk: ScoreStalenessRisk;
