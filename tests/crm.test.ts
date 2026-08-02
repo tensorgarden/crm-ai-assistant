@@ -371,6 +371,46 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+  // A seller-authored checklist is not mutual progress. Current MAP guidance
+  // recommends co-creating the plan and recording the buyer's commitment.
+  it("pairs buyer confirmation identity and time on mutual action plans", () => {
+    const plannedLeads = demoLeads.filter(lead => lead.mutualActionPlan !== null);
+    const buyerConfirmedPlans = plannedLeads.filter(lead => lead.mutualActionPlan?.buyerConfirmedAt !== null);
+    const pendingConfirmationPlans = plannedLeads.filter(lead => lead.mutualActionPlan?.buyerConfirmedAt === null);
+
+    expect(buyerConfirmedPlans.length, "No action plan records buyer confirmation").toBeGreaterThanOrEqual(1);
+    expect(pendingConfirmationPlans.length, "No action plan demonstrates pending buyer confirmation").toBeGreaterThanOrEqual(1);
+
+    for (const lead of plannedLeads) {
+      const plan = lead.mutualActionPlan;
+      expect(plan).not.toBeNull();
+      if (!plan) continue;
+
+      expect(Boolean(plan.buyerConfirmedBy), `Lead ${lead.id} has mismatched buyer confirmation fields`).toBe(
+        Boolean(plan.buyerConfirmedAt)
+      );
+      if (plan.buyerConfirmedAt) {
+        expect(Number.isNaN(Date.parse(plan.buyerConfirmedAt)), `Lead ${lead.id} has an invalid buyer confirmation time`).toBe(false);
+        expect(plan.buyerConfirmedBy?.trim().length ?? 0, `Lead ${lead.id} lacks a named buyer confirmer`).toBeGreaterThanOrEqual(10);
+        expect(Date.parse(plan.buyerConfirmedAt), `Lead ${lead.id} was confirmed after its plan update`).toBeLessThanOrEqual(
+          Date.parse(plan.updatedAt)
+        );
+      }
+    }
+  });
+
+  it("requires buyer confirmation before an active proposal is shown on track", () => {
+    const onTrackProposals = demoLeads.filter(
+      lead => lead.status === "proposal" && lead.mutualActionPlan?.status === "on_track"
+    );
+
+    expect(onTrackProposals.length, "No on-track proposal demonstrates buyer confirmation").toBeGreaterThanOrEqual(1);
+    for (const lead of onTrackProposals) {
+      expect(lead.mutualActionPlan?.buyerConfirmedAt, `Lead ${lead.id} is on track without buyer confirmation`).not.toBeNull();
+      expect(lead.mutualActionPlan?.buyerConfirmedBy, `Lead ${lead.id} is on track without a named buyer`).not.toBeNull();
+    }
+  });
+
   it("surfaces blockers on at-risk action plans instead of showing false momentum", () => {
     const atRiskPlans = demoLeads.filter(lead => lead.mutualActionPlan?.status === "at_risk");
 

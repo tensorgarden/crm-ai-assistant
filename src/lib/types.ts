@@ -79,6 +79,8 @@ export interface MutualActionPlan {
   milestoneOwner: MilestoneOwner;
   dueAt: string;
   blockers: string[];
+  buyerConfirmedBy: string | null;
+  buyerConfirmedAt: string | null;
   updatedAt: string;
 }
 

@@ -91,8 +91,11 @@ function LeadRow({ lead }: { lead: Lead }) {
             <Badge tone={championTone}>{lead.championReadiness.status.replace("_", " ")} champion</Badge>
           </div>
           {lead.mutualActionPlan ? (
-            <div title={`${lead.mutualActionPlan.nextMilestone} · Owner: ${lead.mutualActionPlan.milestoneOwner}`}>
+            <div title={`${lead.mutualActionPlan.nextMilestone} · Owner: ${lead.mutualActionPlan.milestoneOwner} · ${lead.mutualActionPlan.buyerConfirmedBy ? `Confirmed by ${lead.mutualActionPlan.buyerConfirmedBy}` : "Buyer confirmation pending"}`}>
               <Badge tone={actionPlanTone}>{lead.mutualActionPlan.status.replace("_", " ")} action plan</Badge>
+              <div className="mt-1 text-xs text-slate-400">
+                {lead.mutualActionPlan.buyerConfirmedBy ? `Buyer-confirmed · ${lead.mutualActionPlan.buyerConfirmedBy}` : "Buyer confirmation pending"}
+              </div>
             </div>
           ) : (
             <Badge tone="slate">no action plan</Badge>

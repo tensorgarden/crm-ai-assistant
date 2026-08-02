@@ -76,6 +76,8 @@ export const demoLeads: Lead[] = [
       milestoneOwner: "buyer",
       dueAt: "2026-06-11T10:00:00Z",
       blockers: [],
+      buyerConfirmedBy: "David Park, VP Operations",
+      buyerConfirmedAt: "2026-06-07T14:18:00Z",
       updatedAt: "2026-06-07T14:20:00Z",
     },
     buyingCommitteeSignals: [
@@ -151,7 +153,9 @@ export const demoLeads: Lead[] = [
       nextMilestone: "IT and procurement confirm the security review exit criteria",
       milestoneOwner: "shared",
       dueAt: "2026-06-12T14:00:00Z",
-      blockers: ["Procurement timeline and budget approval date are still unconfirmed"],
+      blockers: ["Procurement timeline, buyer confirmation, and budget approval date are still unconfirmed"],
+      buyerConfirmedBy: null,
+      buyerConfirmedAt: null,
       updatedAt: "2026-06-08T10:52:00Z",
     },
     buyingCommitteeSignals: [
@@ -353,6 +357,8 @@ export const demoLeads: Lead[] = [
       milestoneOwner: "buyer",
       dueAt: "2026-06-11T08:00:00Z",
       blockers: [],
+      buyerConfirmedBy: "Tomas Berg, VP Engineering",
+      buyerConfirmedAt: "2026-06-08T16:09:00Z",
       updatedAt: "2026-06-08T16:12:00Z",
     },
     buyingCommitteeSignals: [
