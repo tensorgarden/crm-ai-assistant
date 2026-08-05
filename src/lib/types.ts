@@ -84,6 +84,14 @@ export interface MutualActionPlan {
   updatedAt: string;
 }
 
+export type ForecastCategory = "commit" | "best_case" | "pipeline";
+
+export interface ForecastCall {
+  category: ForecastCategory;
+  reason: string;
+  assessedAt: string;
+}
+
 export interface IcpFitAssessment {
   status: IcpFitStatus;
   evidence: string[];
@@ -115,6 +123,7 @@ export interface Lead {
   qualificationGate: QualificationGate;
   championReadiness: ChampionReadiness;
   mutualActionPlan: MutualActionPlan | null;
+  forecastCall: ForecastCall | null;
   buyingCommitteeSignals: BuyingCommitteeSignal[];
   buyingCommitteeConsensus: BuyingCommitteeConsensus | null;
   scoreStalenessRisk: ScoreStalenessRisk;

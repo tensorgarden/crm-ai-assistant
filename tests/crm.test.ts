@@ -770,3 +770,65 @@ describe("CRM AI Assistant — demo data integrity", () => {
   });
 
 });
+
+// Forecast discipline: 2026 forecasting guidance warns that reps mark deals
+// "commit" on intuition instead of buyer-verified evidence, so forecast
+// categories need explicit entry criteria rather than a hot score alone.
+describe("Forecast call discipline", () => {
+  const validCategories = ["commit", "best_case", "pipeline"];
+
+  it("keeps every forecast call typed, explained, and no newer than the score it relies on", () => {
+    for (const lead of demoLeads) {
+      const call = lead.forecastCall;
+      if (!call) continue;
+      expect(validCategories, `Lead ${lead.id} has an invalid forecast category`).toContain(call.category);
+      expect(call.reason.trim().length, `Lead ${lead.id} has a weak forecast reason`).toBeGreaterThanOrEqual(30);
+      expect(Number.isNaN(Date.parse(call.assessedAt)), `Lead ${lead.id} has an invalid forecast timestamp`).toBe(false);
+      expect(Date.parse(call.assessedAt), `Lead ${lead.id} forecast postdates its score refresh`).toBeLessThanOrEqual(
+        Date.parse(lead.aiScoreLastUpdatedAt)
+      );
+    }
+  });
+
+  it("covers commit, best-case, and pipeline calls so the suite is not a single happy path", () => {
+    const categories = new Set(
+      demoLeads.filter(lead => lead.forecastCall !== null).map(lead => lead.forecastCall?.category)
+    );
+    expect(categories.has("commit"), "No demo lead shows a commit forecast call").toBe(true);
+    expect(categories.has("best_case"), "No demo lead shows a best-case forecast call").toBe(true);
+    expect(categories.has("pipeline"), "No demo lead shows a pipeline forecast call").toBe(true);
+  });
+
+  it("requires buyer-verified on-track evidence before a commit call", () => {
+    const commitLeads = demoLeads.filter(lead => lead.forecastCall?.category === "commit");
+    expect(commitLeads.length, "No demo lead shows a commit forecast call").toBeGreaterThanOrEqual(1);
+    for (const lead of commitLeads) {
+      const plan = lead.mutualActionPlan;
+      expect(plan, `Lead ${lead.id} is committed without a mutual action plan`).not.toBeNull();
+      if (!plan) continue;
+      expect(plan.status, `Lead ${lead.id} is committed on a plan that is not on track`).toBe("on_track");
+      expect(plan.buyerConfirmedAt, `Lead ${lead.id} is committed without buyer confirmation`).not.toBeNull();
+      expect(lead.qualificationGate.status, `Lead ${lead.id} is committed without passing qualification`).toBe("eligible");
+    }
+  });
+
+  it("caps unconfirmed or at-risk plans below commit", () => {
+    for (const lead of demoLeads) {
+      const call = lead.forecastCall;
+      if (!call || call.category === "commit") continue;
+      const plan = lead.mutualActionPlan;
+      const buyerVerifiedOnTrack = plan !== null && plan.status === "on_track" && plan.buyerConfirmedAt !== null;
+      expect(buyerVerifiedOnTrack, `Lead ${lead.id} has buyer-verified on-track evidence but is not committed`).toBe(false);
+    }
+  });
+
+  it("omits forecast calls on closed and disqualified records", () => {
+    for (const lead of demoLeads) {
+      const closedOrDisqualified =
+        lead.status === "won" || lead.status === "lost" || lead.qualificationGate.status === "disqualified";
+      if (closedOrDisqualified) {
+        expect(lead.forecastCall, `Lead ${lead.id} is closed or disqualified but still carries a forecast call`).toBeNull();
+      }
+    }
+  });
+});

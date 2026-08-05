@@ -80,6 +80,11 @@ export const demoLeads: Lead[] = [
       buyerConfirmedAt: "2026-06-07T14:18:00Z",
       updatedAt: "2026-06-07T14:20:00Z",
     },
+    forecastCall: {
+      category: "commit",
+      reason: "Buyer-confirmed onboarding and pricing milestone with engaged budget authority supports a commit call.",
+      assessedAt: "2026-06-07T14:22:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "decision_maker", signal: "COO confirmed final budget authority and joined the proposal decision call", observedAt: "2026-06-07T13:48:00Z" },
       { role: "operations", signal: "VP Operations reviewed the route-optimization proposal twice in the same buying window", observedAt: "2026-06-07T13:55:00Z" },
@@ -158,6 +163,11 @@ export const demoLeads: Lead[] = [
       buyerConfirmedAt: null,
       updatedAt: "2026-06-08T10:52:00Z",
     },
+    forecastCall: {
+      category: "best_case",
+      reason: "Security review exit criteria and budget approval remain unconfirmed, so this stays best case until the buyer signs off.",
+      assessedAt: "2026-06-08T10:58:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "decision_maker", signal: "CIO joined the evaluation and confirmed authority over the platform purchase", observedAt: "2026-06-08T10:10:00Z" },
       { role: "technical", signal: "IT director requested a security-architecture demo for the evaluation team", observedAt: "2026-06-08T10:18:00Z" },
@@ -232,6 +242,11 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-05T09:08:00Z",
     },
     mutualActionPlan: null,
+    forecastCall: {
+      category: "pipeline",
+      reason: "Finance has not accepted the commercial case and the buying group is conflicted, so no commit call is credible yet.",
+      assessedAt: "2026-06-05T09:12:00Z",
+    },
     buyingCommitteeSignals: [
       { role: "operations", signal: "Sales operations requested a rapid rollout to address forecast visibility gaps", observedAt: "2026-06-05T08:45:00Z" },
       { role: "finance", signal: "Finance challenged the commercial case and implementation timing", observedAt: "2026-06-05T08:55:00Z" },
@@ -293,6 +308,7 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-09T08:28:00Z",
     },
     mutualActionPlan: null,
+    forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "fresh",
@@ -360,6 +376,11 @@ export const demoLeads: Lead[] = [
       buyerConfirmedBy: "Tomas Berg, VP Engineering",
       buyerConfirmedAt: "2026-06-08T16:09:00Z",
       updatedAt: "2026-06-08T16:12:00Z",
+    },
+    forecastCall: {
+      category: "commit",
+      reason: "Buyer-confirmed SOW signature path with legal approval and CFO budget authority supports a commit call.",
+      assessedAt: "2026-06-08T16:13:00Z",
     },
     buyingCommitteeSignals: [
       { role: "decision_maker", signal: "CFO confirmed final budget approval and joined the contract decision call", observedAt: "2026-06-08T15:35:00Z" },
@@ -435,6 +456,11 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-06T11:58:00Z",
     },
     mutualActionPlan: null,
+    forecastCall: {
+      category: "pipeline",
+      reason: "Compliance review is still pending and no mutual plan exists, so the deal stays in pipeline until the buyer re-engages.",
+      assessedAt: "2026-06-06T11:59:00Z",
+    },
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "watch",
@@ -488,6 +514,7 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-01T09:27:00Z",
     },
     mutualActionPlan: null,
+    forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "fresh",
@@ -541,6 +568,7 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-05-28T15:12:00Z",
     },
     mutualActionPlan: null,
+    forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "decay_review",
@@ -593,6 +621,7 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-10T13:19:00Z",
     },
     mutualActionPlan: null,
+    forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
     scoreStalenessRisk: "fresh",

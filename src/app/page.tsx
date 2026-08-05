@@ -56,6 +56,7 @@ function LeadRow({ lead }: { lead: Lead }) {
   const committeeConsensusTone = lead.buyingCommitteeConsensus?.status === "aligned" ? "green" : lead.buyingCommitteeConsensus?.status === "mixed" ? "amber" : "red";
   const championTone = lead.championReadiness.status === "validated" ? "green" : lead.championReadiness.status === "needs_enablement" ? "amber" : "red";
   const actionPlanTone = lead.mutualActionPlan?.status === "on_track" ? "green" : lead.mutualActionPlan?.status === "at_risk" ? "amber" : "red";
+  const forecastTone = lead.forecastCall?.category === "commit" ? "green" : lead.forecastCall?.category === "best_case" ? "amber" : lead.forecastCall?.category === "pipeline" ? "blue" : "slate";
   const committeeRoles = lead.buyingCommitteeSignals.map(signal => signal.role);
   const committeeRoleCount = new Set(committeeRoles).size;
   return (
@@ -99,6 +100,13 @@ function LeadRow({ lead }: { lead: Lead }) {
             </div>
           ) : (
             <Badge tone="slate">no action plan</Badge>
+          )}
+          {lead.forecastCall ? (
+            <div title={lead.forecastCall.reason}>
+              <Badge tone={forecastTone}>{lead.forecastCall.category.replace("_", " ")} forecast</Badge>
+            </div>
+          ) : (
+            <Badge tone="slate">no forecast call</Badge>
           )}
           {committeeRoleCount > 0 ? (
             <>
