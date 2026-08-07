@@ -2,34 +2,29 @@ import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
-const baseUrl = process.env.SCREENSHOT_URL || 'http://127.0.0.1:3107';
+const baseUrl = process.env.SCREENSHOT_URL || 'http://127.0.0.1:3000';
 const outDir = path.resolve('docs/screenshots');
 
 const captures = [
   {
-    file: '01-dashboard-hero.png',
-    description: 'Landing/dashboard hero with active practice loop',
-    locator: 'header'
+    file: '01-dashboard-header.png',
+    description: 'Dashboard header with key metrics and navigation',
+    selector: 'header'
   },
   {
-    file: '02-candidate-workspace-session-builder.png',
-    description: 'Candidate workspace, session builder, and coach/admin roles',
-    locator: 'section:has-text("Candidate workspace")'
+    file: '02-lead-queue-table.png',
+    description: 'AI-scored lead queue with scoring and deal readiness',
+    selector: 'section:nth-of-type(1)'
   },
   {
-    file: '03-transcript-follow-up.png',
-    description: 'Transcript and deterministic mock AI follow-up',
-    locator: 'section:has-text("Transcript and mock AI follow-up")'
+    file: '03-followup-tasks.png',
+    description: 'Follow-up task queue and recent activity',
+    selector: 'section:nth-of-type(2)'
   },
   {
-    file: '04-feedback-rubric-report.png',
-    description: 'Rubric scoring and feedback report',
-    locator: 'section:has-text("Rubric scoring and feedback report")'
-  },
-  {
-    file: '05-admin-analytics.png',
-    description: 'Admin progress dashboard and candidate progress timeline',
-    locator: 'section:has-text("Admin progress dashboard")'
+    file: '04-activity-log.png',
+    description: 'Recent activity and engagement timeline',
+    selector: 'section:nth-of-type(3)'
   },
   {
     file: '00-full-page.png',
@@ -51,9 +46,16 @@ for (const capture of captures) {
   if (capture.fullPage) {
     await page.screenshot({ path: outputPath, fullPage: true });
   } else {
-    const element = page.locator(capture.locator).first();
-    await element.scrollIntoViewIfNeeded();
-    await element.screenshot({ path: outputPath });
+    try {
+      const element = page.locator(capture.selector).first();
+      await element.waitFor({ timeout: 5000 });
+      await element.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(500);
+      await element.screenshot({ path: outputPath });
+    } catch (e) {
+      console.warn(`Warning: Could not capture ${capture.file}: ${e.message}`);
+      continue;
+    }
   }
   manifest.push({ file: `docs/screenshots/${capture.file}`, description: capture.description });
 }
