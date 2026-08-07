@@ -107,11 +107,12 @@ No real customer data, no network calls, no external APIs.
 
 | Screenshot | Caption |
 |---|---|
-| ![Dashboard Header](docs/screenshots/01-dashboard-header.png) | **Dashboard header** — Pipeline value ($1.7M), qualified leads (37), win rate (32%), average deal ($74K), and overdue task count (5) at a glance |
-| ![Lead Queue Table](docs/screenshots/02-lead-queue-table.png) | **AI-scored lead queue** — All leads with AI scoring (38–95/100), confidence levels, deal values, status, qualification gates, and deal readiness. Sortable by score, value, or risk flags |
-| ![Follow-up Tasks](docs/screenshots/03-followup-tasks.png) | **Follow-up task queue** — Priority-sorted tasks with icons (call, email, meeting), due dates, urgency levels (red for urgent/overdue), and brief notes for each follow-up |
-| ![Activity Log](docs/screenshots/04-activity-log.png) | **Recent activity timeline** — Chronological feed of sales interactions with outcome indicators (✅ positive, ➖ mixed, ❌ lost) and brief summaries of each engagement |
-| ![Full Page](docs/screenshots/00-full-page.png) | **Full-page scrollable dashboard** — Complete view of the single-page application with all sections stacked vertically for complete portfolio review |
+| ![AI-scored lead queue with deal readiness and risk flags](docs/screenshots/01-lead-queue.png) | AI-scored lead queue with deal readiness and risk flags |
+| ![Sales pipeline by stage with value and conversion context](docs/screenshots/02-pipeline-stages.png) | Sales pipeline by stage with value and conversion context |
+| ![Priority follow-up task queue with due dates and owners](docs/screenshots/03-followups.png) | Priority follow-up task queue with due dates and owners |
+| ![Recent sales activity and engagement outcomes](docs/screenshots/04-recent-activity.png) | Recent sales activity and engagement outcomes |
+| ![Team performance metrics across the active pipeline](docs/screenshots/05-team-performance.png) | Team performance metrics across the active pipeline |
+| ![Full-page portfolio demo screenshot](docs/screenshots/00-full-page.png) | Full-page portfolio demo screenshot |
 
 ## Production roadmap
 
