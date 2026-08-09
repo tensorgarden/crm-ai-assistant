@@ -831,4 +831,54 @@ describe("Forecast call discipline", () => {
       }
     }
   });
+
+  // Behavioral engagement signals (website visits, email opens, content downloads) are
+  // stronger intent indicators than single points of contact; high-intent leads should
+  // show multiple engagement signals to strengthen the score confidence.
+  it("active high-intent leads (≥85) have behavioral engagement signals", () => {
+    const activeHighIntentLeads = demoLeads.filter(
+      lead => lead.aiScore >= 85 && lead.status !== "won" && lead.status !== "lost"
+    );
+
+    expect(activeHighIntentLeads.length, "No active high-intent leads found for engagement coverage").toBeGreaterThanOrEqual(1);
+
+    for (const lead of activeHighIntentLeads) {
+      expect(
+        lead.engagementSignals.length,
+        `Lead ${lead.id} is high intent (score ${lead.aiScore}) but has no engagement signals — behavioral intent evidence is missing`
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it("all leads have engagement signals array defined", () => {
+    for (const lead of demoLeads) {
+      expect(
+        Array.isArray(lead.engagementSignals),
+        `Lead ${lead.id} engagementSignals is not an array`
+      ).toBe(true);
+    }
+  });
+
+  it("engagement signals have required fields", () => {
+    const validSignalTypes = [
+      "website_visit",
+      "pricing_page_view",
+      "demo_request",
+      "doc_download",
+      "email_open",
+      "email_click",
+      "content_engagement",
+      "competitor_research",
+    ];
+
+    for (const lead of demoLeads) {
+      for (const signal of lead.engagementSignals) {
+        expect(validSignalTypes, `Lead ${lead.id} has invalid signal type "${signal.type}"`).toContain(signal.type);
+        expect(signal.description.trim().length, `Lead ${lead.id} engagement signal lacks description`).toBeGreaterThan(0);
+        expect(Number.isNaN(Date.parse(signal.timestamp)), `Lead ${lead.id} has invalid engagement signal timestamp`).toBe(
+          false
+        );
+      }
+    }
+  });
 });

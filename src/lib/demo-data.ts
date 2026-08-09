@@ -97,6 +97,12 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-07T14:10:00Z",
       unresolvedConcerns: [],
     },
+    engagementSignals: [
+      { type: "pricing_page_view", description: "VP Operations visited pricing page twice within 48 hours", timestamp: "2026-06-06T16:30:00Z" },
+      { type: "doc_download", description: "Downloaded implementation roadmap (15-page PDF)", timestamp: "2026-06-07T10:15:00Z" },
+      { type: "email_open", description: "Opened proposal email 4 times and clicked proposal link twice", timestamp: "2026-06-07T13:45:00Z" },
+      { type: "competitor_research", description: "Visit from competitor comparison content before proposal call", timestamp: "2026-06-07T12:00:00Z" },
+    ],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
     repFeedback: null,
@@ -179,6 +185,11 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-08T10:40:00Z",
       unresolvedConcerns: [],
     },
+    engagementSignals: [
+      { type: "website_visit", description: "Angela visited product overview page 3 times", timestamp: "2026-06-07T14:00:00Z" },
+      { type: "demo_request", description: "Requested a security-focused demo", timestamp: "2026-06-07T15:30:00Z" },
+      { type: "doc_download", description: "Downloaded SOC 2 compliance documentation", timestamp: "2026-06-08T09:00:00Z" },
+    ],
     scoreStalenessRisk: "watch",
     scoreStalenessReason: "Budget is not confirmed yet, so the score should stay under review until procurement signals firm up.",
     repFeedback: {
@@ -257,6 +268,9 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-05T09:05:00Z",
       unresolvedConcerns: ["Finance has not approved the commercial case", "Stakeholders disagree on implementation timing"],
     },
+    engagementSignals: [
+{ type: "website_visit", description: "Raj visited features page once", timestamp: "2026-06-04T10:00:00Z" },
+    ],
     scoreStalenessRisk: "decay_review",
     scoreStalenessReason: "Slow response and no fresh intent since the last call mean this score needs decay before rep prioritization.",
     repFeedback: null,
@@ -311,6 +325,12 @@ export const demoLeads: Lead[] = [
     forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
+    engagementSignals: [
+      { type: "pricing_page_view", description: "Visited pricing page twice within 24 hours", timestamp: "2026-06-06T14:00:00Z" },
+      { type: "content_engagement", description: "Watched 12-minute product walkthrough video", timestamp: "2026-06-07T16:00:00Z" },
+      { type: "email_click", description: "Clicked comparison guide link in marketing email", timestamp: "2026-06-08T11:00:00Z" },
+      { type: "doc_download", description: "Downloaded integration API reference", timestamp: "2026-06-08T14:00:00Z" },
+    ],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
     repFeedback: {
@@ -394,6 +414,12 @@ export const demoLeads: Lead[] = [
       assessedAt: "2026-06-08T16:05:00Z",
       unresolvedConcerns: [],
     },
+    engagementSignals: [
+{ type: "pricing_page_view", description: "Visited pricing page twice within 24 hours", timestamp: "2026-06-06T14:00:00Z" },
+{ type: "content_engagement", description: "Watched 12-minute product walkthrough video", timestamp: "2026-06-07T16:00:00Z" },
+{ type: "email_click", description: "Clicked comparison guide link in marketing email", timestamp: "2026-06-08T11:00:00Z" },
+{ type: "doc_download", description: "Downloaded integration API reference", timestamp: "2026-06-08T14:00:00Z" },
+    ],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
     repFeedback: {
@@ -463,6 +489,10 @@ export const demoLeads: Lead[] = [
     },
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
+    engagementSignals: [
+      { type: "content_engagement", description: "Downloaded compliance resources PDF", timestamp: "2026-06-05T11:00:00Z" },
+      { type: "email_open", description: "Opened compliance materials email", timestamp: "2026-06-06T09:30:00Z" },
+    ],
     scoreStalenessRisk: "watch",
     scoreStalenessReason: "Compliance review is pending, so keep the score visible but require a fresh buyer signal before escalation.",
     repFeedback: null,
@@ -517,6 +547,7 @@ export const demoLeads: Lead[] = [
     forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
+    engagementSignals: [],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
     repFeedback: null,
@@ -571,6 +602,9 @@ export const demoLeads: Lead[] = [
     forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
+    engagementSignals: [
+      { type: "email_open", description: "Opened pricing comparison email", timestamp: "2026-05-27T14:00:00Z" },
+    ],
     scoreStalenessRisk: "decay_review",
     scoreStalenessReason: "Closed-lost intent should decay before any nurture reactivation because the last pricing objection is no longer fresh.",
     repFeedback: null,
@@ -624,6 +658,9 @@ export const demoLeads: Lead[] = [
     forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
+    engagementSignals: [
+      { type: "website_visit", description: "Visited blog, viewed case studies", timestamp: "2026-06-07T12:30:00Z" },
+    ],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
     repFeedback: null,

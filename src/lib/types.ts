@@ -14,6 +14,8 @@ export type ScoreFactorCategory = "firmographic" | "technographic" | "intent" | 
 
 export type ScoreStalenessRisk = "fresh" | "watch" | "decay_review";
 
+export type EngagementSignalType = "website_visit" | "pricing_page_view" | "demo_request" | "doc_download" | "email_open" | "email_click" | "content_engagement" | "competitor_research";
+
 export type IcpFitStatus = "strong" | "partial" | "out_of_profile";
 
 export type BuyingCommitteeRole = "decision_maker" | "executive" | "operations" | "technical" | "finance" | "security" | "legal";
@@ -105,6 +107,12 @@ export interface ScoreFactor {
   weight: number; // 0–100 relative contribution to the score
 }
 
+export interface EngagementSignal {
+  type: EngagementSignalType;
+  description: string;
+  timestamp: string;
+}
+
 export interface Lead {
   id: string;
   fullName: string;
@@ -126,6 +134,7 @@ export interface Lead {
   forecastCall: ForecastCall | null;
   buyingCommitteeSignals: BuyingCommitteeSignal[];
   buyingCommitteeConsensus: BuyingCommitteeConsensus | null;
+  engagementSignals: EngagementSignal[];
   scoreStalenessRisk: ScoreStalenessRisk;
   scoreStalenessReason: string | null;
   repFeedback: RepFeedback | null;
