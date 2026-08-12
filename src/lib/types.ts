@@ -80,6 +80,8 @@ export interface MutualActionPlan {
   nextMilestone: string;
   milestoneOwner: MilestoneOwner;
   dueAt: string;
+  slippedFromAt: string | null;
+  slippageCount: number;
   blockers: string[];
   buyerConfirmedBy: string | null;
   buyerConfirmedAt: string | null;

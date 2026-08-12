@@ -92,10 +92,14 @@ function LeadRow({ lead }: { lead: Lead }) {
             <Badge tone={championTone}>{lead.championReadiness.status.replace("_", " ")} champion</Badge>
           </div>
           {lead.mutualActionPlan ? (
-            <div title={`${lead.mutualActionPlan.nextMilestone} · Owner: ${lead.mutualActionPlan.milestoneOwner} · ${lead.mutualActionPlan.buyerConfirmedBy ? `Confirmed by ${lead.mutualActionPlan.buyerConfirmedBy}` : "Buyer confirmation pending"}`}>
+            <div title={`${lead.mutualActionPlan.nextMilestone} · Owner: ${lead.mutualActionPlan.milestoneOwner}${lead.mutualActionPlan.slippageCount > 0 ? ` · Milestone slipped ${lead.mutualActionPlan.slippageCount}× from ${new Date(lead.mutualActionPlan.slippedFromAt ?? lead.mutualActionPlan.dueAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : ""} · ${lead.mutualActionPlan.buyerConfirmedBy ? `Confirmed by ${lead.mutualActionPlan.buyerConfirmedBy}` : "Buyer confirmation pending"}`}>
               <Badge tone={actionPlanTone}>{lead.mutualActionPlan.status.replace("_", " ")} action plan</Badge>
               <div className="mt-1 text-xs text-slate-400">
-                {lead.mutualActionPlan.buyerConfirmedBy ? `Buyer-confirmed · ${lead.mutualActionPlan.buyerConfirmedBy}` : "Buyer confirmation pending"}
+                {lead.mutualActionPlan.slippageCount > 0
+                  ? `Milestone slipped ${lead.mutualActionPlan.slippageCount}× · ${lead.mutualActionPlan.buyerConfirmedBy ? `Buyer-confirmed · ${lead.mutualActionPlan.buyerConfirmedBy}` : "Buyer confirmation pending"}`
+                  : lead.mutualActionPlan.buyerConfirmedBy
+                    ? `Buyer-confirmed · ${lead.mutualActionPlan.buyerConfirmedBy}`
+                    : "Buyer confirmation pending"}
               </div>
             </div>
           ) : (

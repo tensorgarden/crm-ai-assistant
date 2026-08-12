@@ -426,6 +426,59 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+  // Pipeline-health guard: 2026 sales pipeline guidance ranks slippage
+  // (deals pushing past their agreed milestone dates) as a leading warning
+  // sign, so action plans should record the original due date instead of
+  // silently resetting it when a milestone moves.
+  it("records milestone slippage instead of silently resetting due dates", () => {
+    const plannedLeads = demoLeads.filter(lead => lead.mutualActionPlan !== null);
+
+    expect(plannedLeads.length, "No demo leads show a mutual action plan").toBeGreaterThanOrEqual(2);
+
+    for (const lead of plannedLeads) {
+      const plan = lead.mutualActionPlan;
+      expect(plan).not.toBeNull();
+      if (!plan) continue;
+
+      expect(Number.isInteger(plan.slippageCount), `Lead ${lead.id} has a non-integer slippage count`).toBe(true);
+      expect(plan.slippageCount, `Lead ${lead.id} has a negative slippage count`).toBeGreaterThanOrEqual(0);
+
+      if (plan.slippageCount === 0) {
+        expect(plan.slippedFromAt, `Lead ${lead.id} has a stale slip origin with zero slips`).toBeNull();
+      } else {
+        expect(plan.slippedFromAt, `Lead ${lead.id} has slips without an original due date`).not.toBeNull();
+        expect(Number.isNaN(Date.parse(plan.slippedFromAt ?? "")), `Lead ${lead.id} has an invalid original due date`).toBe(false);
+        expect(
+          Date.parse(plan.slippedFromAt ?? ""),
+          `Lead ${lead.id} original due date is not before the current due date`
+        ).toBeLessThan(Date.parse(plan.dueAt));
+      }
+    }
+  });
+
+  it("keeps slipped milestones from reading as clean momentum", () => {
+    const slippedPlans = demoLeads.filter(lead => (lead.mutualActionPlan?.slippageCount ?? 0) > 0);
+
+    expect(slippedPlans.length, "No demo lead shows a slipped milestone").toBeGreaterThanOrEqual(1);
+
+    for (const lead of slippedPlans) {
+      const plan = lead.mutualActionPlan;
+      expect(plan).not.toBeNull();
+      if (!plan) continue;
+
+      expect(plan.blockers.length, `Lead ${lead.id} slipped without naming the cause`).toBeGreaterThanOrEqual(1);
+      expect(plan.blockers.every(blocker => blocker.trim().length >= 25), `Lead ${lead.id} has a weak slip blocker`).toBe(true);
+
+      if (plan.status === "on_track") {
+        expect(plan.buyerConfirmedAt, `Lead ${lead.id} slipped back on track without buyer re-confirmation`).not.toBeNull();
+        expect(
+          Date.parse(plan.buyerConfirmedAt ?? ""),
+          `Lead ${lead.id} was re-confirmed before the slip`
+        ).toBeGreaterThan(Date.parse(plan.slippedFromAt ?? ""));
+      }
+    }
+  });
+
   // Pipeline hygiene: closed deals should not carry pending follow-ups.
   // Outdated stage data is the second-most-common AI scoring quality issue.
   it("won and lost leads have no pending follow-up references", () => {
