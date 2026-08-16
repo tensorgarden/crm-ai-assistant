@@ -935,3 +935,53 @@ describe("Forecast call discipline", () => {
     }
   });
 });
+
+
+// Engagement signal integrity: dirty CRM data is the top reason AI scoring goes wrong.
+// Duplicate engagement traces across unrelated accounts and copy-paste signal blocks
+// inflate scores and erode rep trust, so demo signals must stay account-specific.
+describe("Engagement signal integrity", () => {
+  it("no two leads carry identical engagement signal records", () => {
+    const seen = new Set<string>();
+    for (const lead of demoLeads) {
+      for (const signal of lead.engagementSignals) {
+        const key = `${signal.type}|${signal.description}|${signal.timestamp}`;
+        expect(
+          seen.has(key),
+          `Duplicate engagement signal record "${key}" appears on more than one lead`
+        ).toBe(false);
+        seen.add(key);
+      }
+    }
+  });
+
+  it("no two leads share an identical engagement fingerprint", () => {
+    const fingerprints = new Map<string, string>();
+    for (const lead of demoLeads) {
+      if (lead.engagementSignals.length === 0) {
+        continue;
+      }
+      const fingerprint = lead.engagementSignals.map(s => `${s.type}@${s.timestamp}`).join(";");
+      const existing = fingerprints.get(fingerprint);
+      expect(
+        existing,
+        `Lead ${lead.id} shares an identical engagement fingerprint with ${existing}`
+      ).toBeUndefined();
+      fingerprints.set(fingerprint, lead.id);
+    }
+  });
+
+  it("every engagement signal predates the score refresh that relies on it", () => {
+    for (const lead of demoLeads) {
+      const scoreUpdatedAt = Date.parse(lead.aiScoreLastUpdatedAt);
+      for (const signal of lead.engagementSignals) {
+        const signalAt = Date.parse(signal.timestamp);
+        expect(Number.isNaN(signalAt), `Lead ${lead.id} has an unparseable signal timestamp`).toBe(false);
+        expect(
+          signalAt,
+          `Lead ${lead.id} has a signal from after its score refresh — the score cannot cite future signals`
+        ).toBeLessThanOrEqual(scoreUpdatedAt);
+      }
+    }
+  });
+});

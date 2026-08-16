@@ -329,12 +329,7 @@ export const demoLeads: Lead[] = [
     forecastCall: null,
     buyingCommitteeSignals: [],
     buyingCommitteeConsensus: null,
-    engagementSignals: [
-      { type: "pricing_page_view", description: "Visited pricing page twice within 24 hours", timestamp: "2026-06-06T14:00:00Z" },
-      { type: "content_engagement", description: "Watched 12-minute product walkthrough video", timestamp: "2026-06-07T16:00:00Z" },
-      { type: "email_click", description: "Clicked comparison guide link in marketing email", timestamp: "2026-06-08T11:00:00Z" },
-      { type: "doc_download", description: "Downloaded integration API reference", timestamp: "2026-06-08T14:00:00Z" },
-    ],
+    engagementSignals: [],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
     repFeedback: {
@@ -421,10 +416,10 @@ export const demoLeads: Lead[] = [
       unresolvedConcerns: [],
     },
     engagementSignals: [
-{ type: "pricing_page_view", description: "Visited pricing page twice within 24 hours", timestamp: "2026-06-06T14:00:00Z" },
-{ type: "content_engagement", description: "Watched 12-minute product walkthrough video", timestamp: "2026-06-07T16:00:00Z" },
-{ type: "email_click", description: "Clicked comparison guide link in marketing email", timestamp: "2026-06-08T11:00:00Z" },
-{ type: "doc_download", description: "Downloaded integration API reference", timestamp: "2026-06-08T14:00:00Z" },
+      { type: "pricing_page_view", description: "Procurement and CFO revisited the pricing page before the SOW decision call", timestamp: "2026-06-08T13:00:00Z" },
+      { type: "website_visit", description: "Legal team visited the data-processing agreement and security terms pages", timestamp: "2026-06-08T14:20:00Z" },
+      { type: "doc_download", description: "Downloaded the final SOW package from the deal room", timestamp: "2026-06-08T15:40:00Z" },
+      { type: "email_click", description: "Clicked the contract signature link preview in the SOW email", timestamp: "2026-06-08T16:05:00Z" },
     ],
     scoreStalenessRisk: "fresh",
     scoreStalenessReason: null,
