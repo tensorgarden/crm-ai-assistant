@@ -16,6 +16,8 @@ export type ScoreStalenessRisk = "fresh" | "watch" | "decay_review";
 
 export type EngagementSignalType = "website_visit" | "pricing_page_view" | "demo_request" | "doc_download" | "email_open" | "email_click" | "content_engagement" | "competitor_research";
 
+export type EngagementSignalSource = "first_party" | "third_party_intent";
+
 export type IcpFitStatus = "strong" | "partial" | "out_of_profile";
 
 export type BuyingCommitteeRole = "decision_maker" | "executive" | "operations" | "technical" | "finance" | "security" | "legal";
@@ -111,6 +113,7 @@ export interface ScoreFactor {
 
 export interface EngagementSignal {
   type: EngagementSignalType;
+  source: EngagementSignalSource;
   description: string;
   timestamp: string;
 }

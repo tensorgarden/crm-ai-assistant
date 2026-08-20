@@ -984,4 +984,45 @@ describe("Engagement signal integrity", () => {
       }
     }
   });
+
+  it("every engagement signal carries a typed provenance source", () => {
+    const validSources = ["first_party", "third_party_intent"];
+    for (const lead of demoLeads) {
+      for (const signal of lead.engagementSignals) {
+        expect(
+          validSources,
+          `Lead ${lead.id} has an invalid signal provenance "${signal.source}"`
+        ).toContain(signal.source);
+      }
+    }
+  });
+
+  // Third-party intent enrichment (G2 category research, competitor review-page
+  // traffic) is a real scoring input, but it is unverified until a first-party
+  // touch confirms the buyer. Unflagged third-party intent inflates hot queues.
+  it("third-party intent stays below hot routing until first-party verification", () => {
+    const thirdPartyLeads = demoLeads.filter(lead =>
+      lead.engagementSignals.some(signal => signal.source === "third_party_intent")
+    );
+
+    expect(
+      thirdPartyLeads.length,
+      "No demo leads show third-party intent provenance handling"
+    ).toBeGreaterThanOrEqual(1);
+
+    for (const lead of thirdPartyLeads) {
+      expect(
+        lead.aiRiskFlags,
+        `Lead ${lead.id} carries third-party intent without the unverified risk flag`
+      ).toContain("third_party_intent_unverified");
+
+      const hasFirstPartySignal = lead.engagementSignals.some(signal => signal.source === "first_party");
+      if (!hasFirstPartySignal) {
+        expect(
+          lead.aiScore,
+          `Lead ${lead.id} scores ${lead.aiScore} from third-party intent with no first-party verification`
+        ).toBeLessThan(85);
+      }
+    }
+  });
 });

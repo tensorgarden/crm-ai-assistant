@@ -68,6 +68,9 @@ function LeadRow({ lead }: { lead: Lead }) {
       <td className="py-3 px-4"><Badge tone={lead.status === "won" ? "green" : lead.status === "lost" ? "red" : lead.status === "proposal" ? "purple" : lead.status === "qualified" ? "blue" : "amber"}>{lead.status}</Badge></td>
       <td className="py-3 px-4" title={lead.qualificationGate.reason}>
         <Badge tone={qualificationTone}>{lead.qualificationGate.status.replace("_", " ")}</Badge>
+        {lead.engagementSignals.some(signal => signal.source === "third_party_intent") && (
+          <div className="mt-1 text-xs text-slate-400" title="Third-party intent enrichment is surfaced but never hot-routed until first-party activity confirms the buyer">Third-party intent · unverified</div>
+        )}
       </td>
       <td className="py-3 px-4"><span className={`font-bold ${scoreColor}`}>{lead.aiScore}</span><span className="text-slate-400">/100</span></td>
       <td className="py-3 px-4">
