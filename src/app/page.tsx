@@ -130,7 +130,16 @@ function LeadRow({ lead }: { lead: Lead }) {
           )}
         </div>
       </td>
-      <td className="py-3 px-4">{lead.aiRiskFlags.length > 0 ? lead.aiRiskFlags.map(f => <Badge key={f} tone="red">{f}</Badge>) : <Badge tone="green">clear</Badge>}</td>
+      <td className="py-3 px-4">
+        {lead.aiRiskFlags.length > 0 ? lead.aiRiskFlags.map(f => <Badge key={f} tone="red">{f}</Badge>) : <Badge tone="green">clear</Badge>}
+        {lead.scoreStalenessRisk !== 'fresh' && (
+          <div title={lead.scoreStalenessReason ?? 'Score freshness needs review'}>
+            <Badge tone={lead.scoreStalenessRisk === 'decay_review' ? 'red' : 'amber'}>
+              {lead.scoreStalenessRisk === 'decay_review' ? 'score revalidation due' : 'freshness watch'}
+            </Badge>
+          </div>
+        )}
+      </td>
     </tr>
   );
 }

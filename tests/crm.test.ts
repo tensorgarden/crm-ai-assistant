@@ -633,6 +633,34 @@ describe("CRM AI Assistant — demo data integrity", () => {
     }
   });
 
+  // Operational activation guard: a stale score should remain attached to
+  // an owned, unfinished revalidation action instead of becoming a snapshot.
+  it('keeps stale active scores attached to an unfinished revalidation action', () => {
+    const staleActiveLeads = demoLeads.filter(
+      lead => lead.status !== 'won' && lead.status !== 'lost' && lead.scoreStalenessRisk !== 'fresh'
+    );
+
+    expect(staleActiveLeads.length, 'No active lead demonstrates stale-score activation coverage').toBeGreaterThanOrEqual(1);
+
+    for (const lead of staleActiveLeads) {
+      expect(lead.nextFollowUpId, `Lead ${lead.id} has stale scoring risk but no owned revalidation action`).not.toBeNull();
+      const followUp = lead.nextFollowUpId
+        ? demoFollowUps.find(candidate => candidate.id === lead.nextFollowUpId)
+        : undefined;
+
+      expect(followUp, `Lead ${lead.id} points to a missing revalidation action`).toBeDefined();
+      if (!followUp) continue;
+
+      expect(followUp.leadId, `Revalidation action ${followUp.id} targets the wrong lead`).toBe(lead.id);
+      expect(followUp.completed, `Lead ${lead.id} has stale scoring risk but its revalidation action is complete`).toBe(false);
+      expect(Number.isNaN(Date.parse(followUp.scheduledFor)), `Revalidation action ${followUp.id} has an invalid schedule`).toBe(false);
+      expect(
+        Date.parse(followUp.scheduledFor),
+        `Lead ${lead.id} revalidation action predates the score refresh it is meant to revisit`
+      ).toBeGreaterThanOrEqual(Date.parse(lead.aiScoreLastUpdatedAt));
+    }
+  });
+
   // Closed-loop rep feedback: reps must be able to override AI scores.
   // Without this, model accuracy drifts and reps ignore scores entirely.
   it("rep feedback entries reference valid sales reps", () => {
