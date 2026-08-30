@@ -59,6 +59,8 @@ function LeadRow({ lead }: { lead: Lead }) {
   const forecastTone = lead.forecastCall?.category === "commit" ? "green" : lead.forecastCall?.category === "best_case" ? "amber" : lead.forecastCall?.category === "pipeline" ? "blue" : "slate";
   const committeeRoles = lead.buyingCommitteeSignals.map(signal => signal.role);
   const committeeRoleCount = new Set(committeeRoles).size;
+  const staleEngagementSignals = lead.engagementSignals.filter(signal => signal.recency === "stale");
+  const agingEngagementSignals = lead.engagementSignals.filter(signal => signal.recency === "aging");
   return (
     <tr className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
       <td className="py-3 px-4">
@@ -137,6 +139,16 @@ function LeadRow({ lead }: { lead: Lead }) {
             <Badge tone={lead.scoreStalenessRisk === 'decay_review' ? 'red' : 'amber'}>
               {lead.scoreStalenessRisk === 'decay_review' ? 'score revalidation due' : 'freshness watch'}
             </Badge>
+          </div>
+        )}
+        {staleEngagementSignals.length > 0 && (
+          <div title="Signal-level decay keeps expired engagement from inflating the score">
+            <Badge tone="red">{staleEngagementSignals.length} stale signal{staleEngagementSignals.length === 1 ? "" : "s"}</Badge>
+          </div>
+        )}
+        {staleEngagementSignals.length === 0 && agingEngagementSignals.length > 0 && (
+          <div title="Signal-level decay marks older engagement for review before it becomes score noise">
+            <Badge tone="amber">{agingEngagementSignals.length} aging signal{agingEngagementSignals.length === 1 ? "" : "s"}</Badge>
           </div>
         )}
       </td>

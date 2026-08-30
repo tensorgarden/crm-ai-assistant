@@ -1053,4 +1053,46 @@ describe("Engagement signal integrity", () => {
       }
     }
   });
+
+  // Signal-level decay prevents an old low-value touch from keeping a lead hot
+  // after the overall score has stopped reflecting current buyer intent.
+  it('requires signal-level decay windows to match recency state', () => {
+    const validRecency = ['fresh', 'aging', 'stale'];
+    const dayMs = 24 * 60 * 60 * 1000;
+    let staleSignalCount = 0;
+
+    for (const lead of demoLeads) {
+      const scoreUpdatedAt = Date.parse(lead.aiScoreLastUpdatedAt);
+      for (const signal of lead.engagementSignals) {
+        const signalAgeDays = (scoreUpdatedAt - Date.parse(signal.timestamp)) / dayMs;
+
+        expect(validRecency, `Lead ${lead.id} has invalid signal recency`).toContain(signal.recency);
+        expect(
+          Number.isInteger(signal.decayWindowDays),
+          `Lead ${lead.id} has a non-integer signal decay window`
+        ).toBe(true);
+        expect(signal.decayWindowDays, `Lead ${lead.id} has a non-positive signal decay window`).toBeGreaterThan(0);
+
+        if (signal.recency === 'fresh') {
+          expect(signalAgeDays, `Lead ${lead.id} marks an old signal as fresh`).toBeLessThanOrEqual(
+            signal.decayWindowDays / 2
+          );
+        } else if (signal.recency === 'aging') {
+          expect(signalAgeDays, `Lead ${lead.id} marks a fresh signal as aging`).toBeGreaterThan(
+            signal.decayWindowDays / 2
+          );
+          expect(signalAgeDays, `Lead ${lead.id} marks an expired signal as aging`).toBeLessThanOrEqual(
+            signal.decayWindowDays
+          );
+        } else {
+          staleSignalCount += 1;
+          expect(signalAgeDays, `Lead ${lead.id} marks a signal stale before its decay window`).toBeGreaterThan(
+            signal.decayWindowDays
+          );
+        }
+      }
+    }
+
+    expect(staleSignalCount, 'No demo signal shows hard-expiry coverage').toBeGreaterThanOrEqual(1);
+  });
 });
