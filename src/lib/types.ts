@@ -118,6 +118,7 @@ export interface EngagementSignal {
   source: EngagementSignalSource;
   recency: EngagementSignalRecency;
   decayWindowDays: number;
+  ingestionLatencyMinutes: number;
   description: string;
   timestamp: string;
 }

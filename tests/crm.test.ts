@@ -1095,4 +1095,53 @@ describe("Engagement signal integrity", () => {
 
     expect(staleSignalCount, 'No demo signal shows hard-expiry coverage').toBeGreaterThanOrEqual(1);
   });
+
+  // Signal-led plays lose value when enrichment arrives after the action window.
+  // The working standard is roughly 15 minutes for high-intent signal delivery.
+  it('tracks signal ingestion latency before the score refresh', () => {
+    const fifteenMinutesMs = 15 * 60 * 1000;
+    let delayedSignalCount = 0;
+
+    for (const lead of demoLeads) {
+      const scoreUpdatedAt = Date.parse(lead.aiScoreLastUpdatedAt);
+      for (const signal of lead.engagementSignals) {
+        expect(
+          Number.isInteger(signal.ingestionLatencyMinutes),
+          `Lead ${lead.id} has a non-integer signal ingestion latency`
+        ).toBe(true);
+        expect(
+          signal.ingestionLatencyMinutes,
+          `Lead ${lead.id} has a negative signal ingestion latency`
+        ).toBeGreaterThanOrEqual(0);
+
+        const ingestedAt = Date.parse(signal.timestamp) + signal.ingestionLatencyMinutes * 60 * 1000;
+        expect(
+          ingestedAt,
+          `Lead ${lead.id} has a signal that arrived after the score refresh`
+        ).toBeLessThanOrEqual(scoreUpdatedAt);
+        if (signal.ingestionLatencyMinutes * 60 * 1000 > fifteenMinutesMs) {
+          delayedSignalCount += 1;
+        }
+      }
+    }
+
+    expect(delayedSignalCount, 'No demo signal shows ingestion-delay coverage').toBeGreaterThanOrEqual(1);
+  });
+
+  it('holds leads with delayed signal ingestion for qualification review', () => {
+    const delayedLeads = demoLeads.filter(lead =>
+      lead.engagementSignals.some(signal => signal.ingestionLatencyMinutes > 15)
+    );
+
+    expect(delayedLeads.length, 'No lead demonstrates delayed signal review').toBeGreaterThanOrEqual(1);
+    for (const lead of delayedLeads) {
+      expect(lead.aiRiskFlags, `Lead ${lead.id} lacks a signal ingestion delay risk flag`).toContain(
+        'signal_ingestion_delay'
+      );
+      expect(
+        lead.qualificationGate.status,
+        `Lead ${lead.id} is eligible despite delayed signal ingestion`
+      ).toBe('review_required');
+    }
+  });
 });
