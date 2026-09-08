@@ -1144,4 +1144,29 @@ describe("Engagement signal integrity", () => {
       ).toBe('review_required');
     }
   });
+
+  // Per-signal attribution helps reps distinguish first-party behavior from
+  // channel-specific noise instead of treating every event as interchangeable.
+  it('attributes engagement signals to their originating channel', () => {
+    const expectedChannels = {
+      website_visit: 'website',
+      pricing_page_view: 'website',
+      demo_request: 'demo',
+      doc_download: 'content',
+      email_open: 'email',
+      email_click: 'email',
+      content_engagement: 'content',
+      competitor_research: 'review_network',
+    } as const;
+    const signals = demoLeads.flatMap(lead => lead.engagementSignals);
+    const channels = new Set<string>();
+
+    expect(signals.length, 'No engagement signals available for channel attribution').toBeGreaterThan(0);
+    for (const signal of signals) {
+      expect(signal.channel, `Signal ${signal.type} is missing channel attribution`).toBe(expectedChannels[signal.type]);
+      channels.add(signal.channel);
+    }
+
+    expect(channels.size, 'Demo data should cover multiple signal channels').toBeGreaterThanOrEqual(4);
+  });
 });
