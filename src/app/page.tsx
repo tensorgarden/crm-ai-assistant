@@ -61,6 +61,8 @@ function LeadRow({ lead }: { lead: Lead }) {
   const committeeRoleCount = new Set(committeeRoles).size;
   const staleEngagementSignals = lead.engagementSignals.filter(signal => signal.recency === "stale");
   const agingEngagementSignals = lead.engagementSignals.filter(signal => signal.recency === "aging");
+  const awaitingIntentSignals = lead.engagementSignals.filter(signal => signal.verificationStatus === "awaiting_first_party");
+  const confirmedIntentSignals = lead.engagementSignals.filter(signal => signal.verificationStatus === "confirmed");
   return (
     <tr className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
       <td className="py-3 px-4">
@@ -70,8 +72,11 @@ function LeadRow({ lead }: { lead: Lead }) {
       <td className="py-3 px-4"><Badge tone={lead.status === "won" ? "green" : lead.status === "lost" ? "red" : lead.status === "proposal" ? "purple" : lead.status === "qualified" ? "blue" : "amber"}>{lead.status}</Badge></td>
       <td className="py-3 px-4" title={lead.qualificationGate.reason}>
         <Badge tone={qualificationTone}>{lead.qualificationGate.status.replace("_", " ")}</Badge>
-        {lead.engagementSignals.some(signal => signal.source === "third_party_intent") && (
-          <div className="mt-1 text-xs text-slate-400" title="Third-party intent enrichment is surfaced but never hot-routed until first-party activity confirms the buyer">Third-party intent · unverified</div>
+        {awaitingIntentSignals.length > 0 && (
+          <div className="mt-1 text-xs text-slate-400" title="Third-party intent enrichment is held until first-party activity confirms the buyer">Third-party intent · awaiting confirmation</div>
+        )}
+        {confirmedIntentSignals.length > 0 && (
+          <div className="mt-1 text-xs text-emerald-700" title="Third-party intent was confirmed by first-party activity">Third-party intent · confirmed</div>
         )}
       </td>
       <td className="py-3 px-4"><span className={`font-bold ${scoreColor}`}>{lead.aiScore}</span><span className="text-slate-400">/100</span></td>

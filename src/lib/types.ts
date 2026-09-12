@@ -18,6 +18,7 @@ export type EngagementSignalType = "website_visit" | "pricing_page_view" | "demo
 
 export type EngagementSignalSource = "first_party" | "third_party_intent";
 export type EngagementSignalChannel = "website" | "email" | "content" | "demo" | "review_network";
+export type EngagementSignalVerificationStatus = "not_required" | "awaiting_first_party" | "confirmed";
 
 export type EngagementSignalRecency = "fresh" | "aging" | "stale";
 
@@ -117,6 +118,8 @@ export interface ScoreFactor {
 export interface EngagementSignal {
   type: EngagementSignalType;
   source: EngagementSignalSource;
+  verificationStatus: EngagementSignalVerificationStatus;
+  verifiedAt: string | null;
   channel: EngagementSignalChannel;
   recency: EngagementSignalRecency;
   decayWindowDays: number;

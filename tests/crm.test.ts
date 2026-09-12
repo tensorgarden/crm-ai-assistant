@@ -956,6 +956,17 @@ describe("Forecast call discipline", () => {
       for (const signal of lead.engagementSignals) {
         expect(validSignalTypes, `Lead ${lead.id} has invalid signal type "${signal.type}"`).toContain(signal.type);
         expect(signal.description.trim().length, `Lead ${lead.id} engagement signal lacks description`).toBeGreaterThan(0);
+        expect(["not_required", "awaiting_first_party", "confirmed"], `Lead ${lead.id} has invalid verification status`).toContain(signal.verificationStatus);
+        if (signal.source === "first_party") {
+          expect(signal.verificationStatus, `Lead ${lead.id} first-party signal should not need verification`).toBe("not_required");
+          expect(signal.verifiedAt).toBeNull();
+        }
+        if (signal.verificationStatus === "awaiting_first_party") {
+          expect(signal.verifiedAt, `Lead ${lead.id} pending verification should not have a completion time`).toBeNull();
+        }
+        if (signal.verificationStatus === "confirmed") {
+          expect(signal.verifiedAt, `Lead ${lead.id} confirmed signal lacks completion time`).not.toBeNull();
+        }
         expect(Number.isNaN(Date.parse(signal.timestamp)), `Lead ${lead.id} has invalid engagement signal timestamp`).toBe(
           false
         );
@@ -1025,32 +1036,35 @@ describe("Engagement signal integrity", () => {
     }
   });
 
-  // Third-party intent enrichment (G2 category research, competitor review-page
-  // traffic) is a real scoring input, but it is unverified until a first-party
-  // touch confirms the buyer. Unflagged third-party intent inflates hot queues.
-  it("third-party intent stays below hot routing until first-party verification", () => {
+  // Third-party intent enrichment is useful context, but it must not become
+  // a hot-routing signal until a first-party touch confirms the buyer.
+  it("keeps third-party intent gated until first-party verification", () => {
     const thirdPartyLeads = demoLeads.filter(lead =>
       lead.engagementSignals.some(signal => signal.source === "third_party_intent")
     );
+    const awaitingLeads = thirdPartyLeads.filter(lead =>
+      lead.engagementSignals.some(signal => signal.verificationStatus === "awaiting_first_party")
+    );
+    const confirmedLeads = thirdPartyLeads.filter(lead =>
+      lead.engagementSignals.some(signal => signal.verificationStatus === "confirmed")
+    );
 
-    expect(
-      thirdPartyLeads.length,
-      "No demo leads show third-party intent provenance handling"
-    ).toBeGreaterThanOrEqual(1);
+    expect(thirdPartyLeads.length, "No demo leads show third-party intent provenance handling").toBeGreaterThanOrEqual(1);
+    expect(awaitingLeads.length, "No demo lead shows pending first-party confirmation").toBeGreaterThanOrEqual(1);
+    expect(confirmedLeads.length, "No demo lead shows a completed first-party confirmation").toBeGreaterThanOrEqual(1);
 
-    for (const lead of thirdPartyLeads) {
-      expect(
-        lead.aiRiskFlags,
-        `Lead ${lead.id} carries third-party intent without the unverified risk flag`
-      ).toContain("third_party_intent_unverified");
+    for (const lead of awaitingLeads) {
+      expect(lead.aiRiskFlags, `Lead ${lead.id} lacks the unverified intent risk flag`).toContain("third_party_intent_unverified");
+      expect(lead.aiScore, `Lead ${lead.id} is hot before first-party verification`).toBeLessThan(85);
+    }
 
-      const hasFirstPartySignal = lead.engagementSignals.some(signal => signal.source === "first_party");
-      if (!hasFirstPartySignal) {
-        expect(
-          lead.aiScore,
-          `Lead ${lead.id} scores ${lead.aiScore} from third-party intent with no first-party verification`
-        ).toBeLessThan(85);
-      }
+    for (const lead of confirmedLeads) {
+      const confirmedSignal = lead.engagementSignals.find(signal => signal.verificationStatus === "confirmed");
+      expect(confirmedSignal, `Lead ${lead.id} has no confirmed intent signal`).toBeDefined();
+      expect(lead.aiRiskFlags, `Lead ${lead.id} retains an unverified flag after confirmation`).not.toContain("third_party_intent_unverified");
+      expect(lead.engagementSignals.some(signal => signal.source === "first_party"), `Lead ${lead.id} has no first-party evidence for confirmation`).toBe(true);
+      expect(confirmedSignal?.verifiedAt, `Lead ${lead.id} has no confirmation timestamp`).not.toBeNull();
+      expect(Date.parse(confirmedSignal?.verifiedAt ?? ""), `Lead ${lead.id} has an invalid confirmation timestamp`).toBeGreaterThan(Date.parse(confirmedSignal?.timestamp ?? ""));
     }
   });
 
@@ -1145,8 +1159,31 @@ describe("Engagement signal integrity", () => {
     }
   });
 
-  // Per-signal attribution helps reps distinguish first-party behavior from
-  // channel-specific noise instead of treating every event as interchangeable.
+  // Third-party intent should move from pending to confirmed only after
+  // first-party activity provides corroborating buyer evidence.
+  it('records first-party confirmation for third-party intent', () => {
+    const transitionLead = demoLeads.find(lead => lead.id === "lead_002");
+    expect(transitionLead, "No lead is available for first-party confirmation coverage").toBeDefined();
+
+    const thirdPartySignal = transitionLead?.engagementSignals.find(
+      signal => signal.source === "third_party_intent"
+    );
+    expect(thirdPartySignal, "No third-party signal is available for confirmation coverage").toBeDefined();
+    expect(
+      transitionLead?.engagementSignals.some(signal => signal.source === "first_party"),
+      "Third-party intent needs a first-party signal before it can be confirmed"
+    ).toBe(true);
+    expect(thirdPartySignal?.verificationStatus).toBe("confirmed");
+    expect(thirdPartySignal?.verifiedAt, "Confirmed intent needs a verification timestamp").not.toBeNull();
+
+    if (!transitionLead || !thirdPartySignal || !thirdPartySignal.verifiedAt) {
+      return;
+    }
+
+    expect(Date.parse(thirdPartySignal.verifiedAt)).toBeGreaterThan(Date.parse(thirdPartySignal.timestamp));
+    expect(Date.parse(thirdPartySignal.verifiedAt)).toBeLessThanOrEqual(Date.parse(transitionLead.aiScoreLastUpdatedAt));
+  });
+
   it('attributes engagement signals to their originating channel', () => {
     const expectedChannels = {
       website_visit: 'website',
